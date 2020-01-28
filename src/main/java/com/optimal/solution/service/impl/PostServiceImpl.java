@@ -1,21 +1,18 @@
 package com.optimal.solution.service.impl;
 
+import com.optimal.solution.dto.PostDto;
 import com.optimal.solution.model.Category;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.model.User;
 import com.optimal.solution.repository.PostRepository;
 import com.optimal.solution.repository.UserRepository;
 import com.optimal.solution.service.PostService;
-import com.optimal.solution.util.Roles;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,21 +37,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public int createOrUpdate(Post newPost) {
+    public int createOrUpdate(PostDto newPost) {
         return postRepository.findById(newPost.getId())
                 .map(post -> {
                     LOGGER.info("Updating Post with Id - {} and Title - {}", post.getId(), post.getTitle());
 
                     post.setTitle(newPost.getTitle());
                     post.setBody(newPost.getBody());
-                    post.setCategories(newPost.getCategories()
-                                            .stream()
-                                            .map( category -> {
-                                                return new Category(category.getId());
-                                            })
-                                            .collect(Collectors.toSet()));
+                    post.setCategories(newPost.getCategoriesId()
+                            .stream()
+                            .map(Category::new)
+                            .collect(Collectors.toSet()));
                     post.setCreateDate(new Date());
-                    post.setUser(userRepository.findByLogin(newPost.getUser().getLogin()).get());
+                    post.setUser(new User(newPost.getUserId()));
 
                     return postRepository.save(post).getId();
                 }).orElseGet(() -> {
@@ -64,14 +59,12 @@ public class PostServiceImpl implements PostService {
 
                     post.setTitle(newPost.getTitle());
                     post.setBody(newPost.getBody());
-                    post.setCategories(newPost.getCategories()
+                    post.setCategories(newPost.getCategoriesId()
                             .stream()
-                            .map( category -> {
-                                return new Category(category.getId());
-                            })
+                            .map(Category::new)
                             .collect(Collectors.toSet()));
                     post.setCreateDate(new Date());
-                    post.setUser(userRepository.findByLogin(newPost.getUser().getLogin()).get());
+                    post.setUser(new User(newPost.getUserId()));
 
                     return postRepository.save(post).getId();
                 });

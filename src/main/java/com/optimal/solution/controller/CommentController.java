@@ -1,5 +1,6 @@
 package com.optimal.solution.controller;
 
+import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.model.Comment;
 import com.optimal.solution.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -19,22 +20,22 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    List<Comment> findAll() {
+    List<CommentDto> findAll() {
         return commentService.findAll();
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<Comment> findById(@PathParam("id") int id) {
+    Optional<Comment> findById(@PathVariable int id) {
         return commentService.findById(id);
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    int createOrUpdate(@RequestBody Comment newComment) {
+    int createOrUpdate(@RequestBody CommentDto newComment) {
         return commentService.createOrUpdate(newComment);
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<Comment> deleteById(@PathParam("id") int id) {
+    Optional<Comment> deleteById(@PathVariable int id) {
         return commentService.deleteById(id);
     }
 }

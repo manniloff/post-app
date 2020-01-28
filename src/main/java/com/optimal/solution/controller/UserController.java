@@ -23,8 +23,8 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<User> findById(@PathParam("id") int id) {
+    @GetMapping(value = "/{id}", produces = "application/json")
+    Optional<User> findById(@PathVariable int id) {
         return userService.findById(id);
     }
 
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<User> deleteById(@PathParam("id") int id) {
+    Optional<User> deleteById(@PathVariable int id) {
         return userService.deleteById(id);
     }
 }

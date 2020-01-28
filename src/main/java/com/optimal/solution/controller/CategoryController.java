@@ -24,7 +24,7 @@ public class CategoryController {
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<Category> findById(@PathParam("id") int id) {
+    Optional<Category> findById(@PathVariable int id) {
         return categoryService.findById(id);
     }
 
@@ -34,7 +34,7 @@ public class CategoryController {
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<Category> deleteById(@PathParam("id") int id) {
+    Optional<Category> deleteById(@PathVariable int id) {
         return categoryService.deleteById(id);
     }
 }

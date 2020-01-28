@@ -1,5 +1,6 @@
 package com.optimal.solution.service.impl;
 
+import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.model.Comment;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.repository.CommentRepository;
@@ -20,9 +21,9 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<Comment> findAll() {
+    public List<CommentDto> findAll() {
         LOGGER.info("Getting all Comments from db");
-        return commentRepository.findAll();
+        return commentRepository.findAllDto();
     }
 
     @Override
@@ -32,11 +33,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public int createOrUpdate(Comment newComment) {
+    public int createOrUpdate(CommentDto newComment) {
         return commentRepository.findById(newComment.getId())
                 .map(comment -> {
                     LOGGER.info("Updating comment with id - {}", comment.getId());
-                    comment.setPost(new Post(newComment.getId()));
+                    comment.setPost(new Post(newComment.getPostId()));
                     comment.setPostedDate(new Date());
                     comment.setText(newComment.getText());
 
@@ -45,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
                     LOGGER.info("Creating comment with id - {}", newComment.getId());
                     Comment comment = new Comment();
 
-                    comment.setPost(new Post(newComment.getId()));
+                    comment.setPost(new Post(newComment.getPostId()));
                     comment.setPostedDate(new Date());
                     comment.setText(newComment.getText());
 

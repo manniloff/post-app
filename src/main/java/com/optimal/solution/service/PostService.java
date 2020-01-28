@@ -1,9 +1,8 @@
 package com.optimal.solution.service;
 
+import com.optimal.solution.dto.PostDto;
 import com.optimal.solution.model.Post;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ public interface PostService {
 
     Optional<Post> findById(int id);
 
-    int createOrUpdate(Post newPost);
+    int createOrUpdate(PostDto newPost);
 
     Optional<Post> deleteById(int id);
 }

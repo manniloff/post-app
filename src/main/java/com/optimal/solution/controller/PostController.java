@@ -1,5 +1,6 @@
 package com.optimal.solution.controller;
 
+import com.optimal.solution.dto.PostDto;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +25,17 @@ public class PostController {
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<Post> findById(@PathParam("id") int id) {
+    Optional<Post> findById(@PathVariable int id) {
         return postService.findById(id);
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    int createOrUpdate(@RequestBody Post newPost) {
+    int createOrUpdate(@RequestBody PostDto newPost) {
         return postService.createOrUpdate(newPost);
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    Optional<Post> deleteById(@PathParam("id") int id) {
+    Optional<Post> deleteById(@PathVariable int id) {
         return postService.deleteById(id);
     }
 }
