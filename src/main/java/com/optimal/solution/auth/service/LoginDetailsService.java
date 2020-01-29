@@ -1,5 +1,6 @@
-package com.optimal.solution.auth;
+package com.optimal.solution.auth.service;
 
+import com.optimal.solution.auth.model.LoginDetails;
 import com.optimal.solution.model.User;
 import com.optimal.solution.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

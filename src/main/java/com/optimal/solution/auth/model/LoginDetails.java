@@ -1,4 +1,4 @@
-package com.optimal.solution.auth;
+package com.optimal.solution.auth.model;
 
 import com.optimal.solution.model.User;
 import org.springframework.security.core.GrantedAuthority;
