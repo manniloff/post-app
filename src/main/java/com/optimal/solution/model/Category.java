@@ -26,7 +26,17 @@ public class Category {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "categories",fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnoreProperties("categories")
     private Set<Post> posts = new HashSet<>();
+   /* @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE,CascadeType.REFRESH})
+    @JoinTable(name = "categories_posts",
+            joinColumns = {
+                    @JoinColumn(name = "category_id", referencedColumnName = "id",
+                            nullable = false, updatable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "post_id", referencedColumnName = "id",
+                            nullable = false, updatable = false)})
+    @JsonIgnoreProperties("categories")
+    private Set<Post> posts = new HashSet<>();*/
 }
