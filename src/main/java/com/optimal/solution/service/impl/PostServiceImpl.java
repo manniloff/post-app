@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
         Optional<Post> post = postRepository.findById(id);
         if (post.isPresent()) {
             LOGGER.info("Deleting Post by Id - {} from db", id);
-                postRepository.deleteByIds(id);
+            postRepository.deleteByIds(id);
         }
         return post;
     }

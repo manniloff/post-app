@@ -12,5 +12,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Transactional
     @Modifying
     @Query("delete from Post p where p.id = :id")
-    void deleteByIds (@PathParam("id") int id);
+    void deleteByIds(@PathParam("id") int id);
 }

@@ -22,7 +22,7 @@ public class LoginDetailsService implements UserDetailsService {
         Optional<User> user = userRepository.findByLogin(userName);
 
         System.out.println(user.toString());
-        user.orElseThrow(() -> new UsernameNotFoundException("Not found user with user name - " + userName ));
+        user.orElseThrow(() -> new UsernameNotFoundException("Not found user with user name - " + userName));
 
         return user.map(LoginDetails::new).get();
     }

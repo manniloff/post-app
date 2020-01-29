@@ -20,10 +20,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="text")
+    @Column(name = "text")
     private String text;
 
-    @Column(name="posted_date")
+    @Column(name = "posted_date")
     private Date postedDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
