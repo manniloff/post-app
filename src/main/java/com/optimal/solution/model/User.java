@@ -27,6 +27,9 @@ public class User {
 
     private boolean active;
 
+    @Column(name = "role", nullable = false,
+            columnDefinition = "ENUM('ADMIN', 'USER')")
+    @Enumerated(value = EnumType.STRING)
     private Roles roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
