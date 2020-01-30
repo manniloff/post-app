@@ -1,12 +1,13 @@
 package com.optimal.solution.service.impl;
 
+import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.dto.PostDto;
 import com.optimal.solution.model.Category;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.model.User;
 import com.optimal.solution.repository.PostRepository;
-import com.optimal.solution.repository.UserRepository;
 import com.optimal.solution.service.PostService;
+import com.optimal.solution.util.Roles;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,23 +23,32 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
 
     @Override
     public List<Post> findAll() {
-        LOGGER.info("Getting list of Posts from db");
-        return postRepository.findAll();
+        if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
+            LOGGER.info("Getting list of Posts from db");
+            return postRepository.findAll();
+        } else {
+            LOGGER.info("Getting list of Posts from db");
+            return postRepository.findAllByUser(JwtRequestFilter.id);
+        }
     }
 
     @Override
-    public Optional<Post> findById(int id) {
-        LOGGER.info("Getting Post by Id - {} from db", id);
-        return postRepository.findById(id);
+    public Optional<Post> findById(int id) throws Exception {
+        if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
+            LOGGER.info("Getting Post by Id - {} from db", id);
+            return postRepository.findById(id);
+        } else {
+            LOGGER.info("Getting list of Posts from db");
+            return postRepository.findByIdAndUser(id, JwtRequestFilter.id);
+        }
     }
 
     @Override
     public int createOrUpdate(PostDto newPost) {
-        return postRepository.findById(newPost.getId())
+        return postRepository.findByIdAndUser(newPost.getId(), JwtRequestFilter.id)
                 .map(post -> {
                     LOGGER.info("Updating Post with Id - {} and Title - {}", post.getId(), post.getTitle());
 
@@ -48,7 +58,7 @@ public class PostServiceImpl implements PostService {
                             .stream()
                             .map(Category::new)
                             .collect(Collectors.toSet()));
-                    post.setCreateDate(new Date());
+                    post.setUpdateDate(new Date());
                     post.setUser(new User(newPost.getUserId()));
 
                     return postRepository.save(post).getId();
@@ -72,7 +82,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Optional<Post> deleteById(int id) {
-        Optional<Post> post = postRepository.findById(id);
+        Optional<Post> post;
+        if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
+            LOGGER.info("Getting Post by Id - {} from db", id);
+            post = postRepository.findById(id);
+        } else {
+            LOGGER.info("Getting list of Posts from db");
+            post = postRepository.findByIdAndUser(id, JwtRequestFilter.id);
+        }
+
         if (post.isPresent()) {
             LOGGER.info("Deleting Post by Id - {} from db", id);
             postRepository.deleteByIds(id);

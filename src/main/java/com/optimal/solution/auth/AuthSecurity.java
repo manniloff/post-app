@@ -32,7 +32,7 @@ public class AuthSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/login").permitAll()
+                .authorizeRequests().antMatchers("/login","/registration").permitAll()
                 .antMatchers("/users", "/categories").hasAuthority("ADMIN")
                 .antMatchers("/posts", "/comments").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated()

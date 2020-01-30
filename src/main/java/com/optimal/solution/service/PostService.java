@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface PostService {
     List<Post> findAll();
 
-    Optional<Post> findById(int id);
+    Optional<Post> findById(int id) throws Exception;
 
     int createOrUpdate(PostDto newPost);
 

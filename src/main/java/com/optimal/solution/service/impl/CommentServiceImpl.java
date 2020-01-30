@@ -1,10 +1,12 @@
 package com.optimal.solution.service.impl;
 
+import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.model.Comment;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.repository.CommentRepository;
 import com.optimal.solution.service.CommentService;
+import com.optimal.solution.util.Roles;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +24,29 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> findAll() {
-        LOGGER.info("Getting all Comments from db");
-        return commentRepository.findAllDto();
+        if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
+            LOGGER.info("Getting all Comments from db");
+            return commentRepository.findAllDto();
+        } else {
+            LOGGER.info("Getting list of Posts from db");
+            return commentRepository.findAllByUser(JwtRequestFilter.id);
+        }
     }
 
     @Override
     public Optional<Comment> findById(int id) {
-        LOGGER.info("Getting Comment by id - {}", id);
-        return commentRepository.findById(id);
+        if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
+            LOGGER.info("Getting Comment by id - {}", id);
+            return commentRepository.findById(id);
+        } else {
+            LOGGER.info("Getting list of Posts from db");
+            return commentRepository.findByIdAndUser(id, JwtRequestFilter.id);
+        }
     }
 
     @Override
     public int createOrUpdate(CommentDto newComment) {
-        return commentRepository.findById(newComment.getId())
+        return commentRepository.findByIdAndUser(newComment.getId(), JwtRequestFilter.id)
                 .map(comment -> {
                     LOGGER.info("Updating comment with id - {}", comment.getId());
                     comment.setPost(new Post(newComment.getPostId()));
@@ -56,8 +68,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Optional<Comment> deleteById(int id) {
-        Optional<Comment> comment = commentRepository.findById(id);
-
+        Optional<Comment> comment;
+        if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
+            comment = commentRepository.findById(id);
+        } else {
+            LOGGER.info("Getting list of Posts from db");
+            comment = commentRepository.findByIdAndUser(id, JwtRequestFilter.id);
+        }
         if (comment.isPresent()) {
             LOGGER.info("Deleting Comment with id - {}", id);
             commentRepository.deleteById(id);

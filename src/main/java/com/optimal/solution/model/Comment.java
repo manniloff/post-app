@@ -12,8 +12,8 @@ import java.util.Date;
 
 @Entity
 @Data
-@ToString(exclude = "post")
-@EqualsAndHashCode(exclude = "post")
+@ToString(exclude = {"post","user"})
+@EqualsAndHashCode(exclude = {"post","user"})
 public class Comment {
 
     @Id
@@ -31,4 +31,9 @@ public class Comment {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Post post;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 }

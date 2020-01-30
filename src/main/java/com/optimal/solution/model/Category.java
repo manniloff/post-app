@@ -1,5 +1,6 @@
 package com.optimal.solution.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -26,5 +27,6 @@ public class Category {
 
     @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnoreProperties("categories")
+    @JsonIgnore
     private Set<Post> posts = new HashSet<>();
 }

@@ -12,4 +12,5 @@ public class CommentDto {
     private String text;
     private Date postedDate;
     private int postId;
+    private int userId;
 }
