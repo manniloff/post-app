@@ -16,15 +16,6 @@ import java.util.Set;
 @ToString(exclude = {"categories", "user"})
 @EqualsAndHashCode(exclude = {"categories", "user"})
 public class Post {
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "post_category_relation",
-            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "category_id", referencedColumnName = "id")}
-    )
-    @JsonIgnoreProperties("posts")
-    Set<Category> categories = new HashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonNull
@@ -42,4 +33,12 @@ public class Post {
     private User user;
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "post_category_relation",
+            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "category_id", referencedColumnName = "id")}
+    )
+    @JsonIgnoreProperties("posts")
+    Set<Category> categories = new HashSet<>();
 }
