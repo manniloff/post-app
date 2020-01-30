@@ -31,15 +31,10 @@ public class AuthSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        /*http
-                .authorizeRequests()
-                .antMatchers("/users","categories").hasAuthority("ADMIN")
-                .antMatchers("/posts","/comments").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers("/").permitAll()
-                .and()
-                .formLogin();*/
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/login").permitAll()
+                .antMatchers("/users", "/categories").hasAuthority("ADMIN")
+                .antMatchers("/posts", "/comments").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
