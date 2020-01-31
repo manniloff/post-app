@@ -24,6 +24,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> findAll() {
+        LOGGER.info("Getting all Comments from db");
+        return commentRepository.findAllDto();
+    }
+
+    @Override
+    public List<CommentDto> findAccountAll() {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting all Comments from db");
             return commentRepository.findAllDto();
@@ -34,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<Comment> findById(int id) {
+    public Optional<Comment> findByIdAccount(int id) {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting Comment by id - {}", id);
             return commentRepository.findById(id);
@@ -42,6 +48,12 @@ public class CommentServiceImpl implements CommentService {
             LOGGER.info("Getting list of Posts from db");
             return commentRepository.findByIdAndUser(id, JwtRequestFilter.id);
         }
+    }
+
+    @Override
+    public Optional<Comment> findById(int id) {
+        LOGGER.info("Getting Comment by id - {}", id);
+        return commentRepository.findById(id);
     }
 
     @Override

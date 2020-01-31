@@ -45,30 +45,4 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-
-    @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> createOrUpdate(@RequestBody PostDto newPost) {
-        try {
-            LOGGER.info("Creating or updating a post");
-            return ResponseEntity.ok(postService.createOrUpdate(newPost));
-        } catch (Exception e) {
-            LOGGER.error("Error with creating or updating a post!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
-
-    @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<?> deleteById(@PathVariable int id) {
-        try {
-            LOGGER.info("Deleting post by id");
-            if(postService.findById(id).isPresent()){
-                return ResponseEntity.ok(postService.deleteById(id));
-            } else {
-                return ResponseEntity.ok("No post found with id " + id);
-            }
-        } catch (Exception e) {
-            LOGGER.error("Error with deleting post by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
 }

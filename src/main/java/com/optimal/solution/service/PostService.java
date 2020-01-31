@@ -9,9 +9,12 @@ import java.util.Optional;
 public interface PostService {
     List<Post> findAll();
 
-    Optional<Post> findById(int id) throws Exception;
+    Optional<Post> findById(int id);
+    Optional<Post> findByIdAccount(int id);
 
     int createOrUpdate(PostDto newPost);
 
     Optional<Post> deleteById(int id);
+
+    List<Post> findAccountAll();
 }

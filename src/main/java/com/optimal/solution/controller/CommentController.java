@@ -45,30 +45,4 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-
-    @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> createOrUpdate(@RequestBody CommentDto newComment) {
-        try {
-            LOGGER.info("Creating or updating a comment");
-            return ResponseEntity.ok(commentService.createOrUpdate(newComment));
-        } catch (Exception e) {
-            LOGGER.error("Error with creating or updating a comment!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
-
-    @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<?> deleteById(@PathVariable int id) {
-        try {
-            if (commentService.findById(id).isPresent()) {
-                LOGGER.info("Deleting comment by id");
-                return ResponseEntity.ok(commentService.deleteById(id));
-            } else {
-                return ResponseEntity.ok("No comment found with id " + id);
-            }
-        } catch (Exception e) {
-            LOGGER.error("Error with deleting comment by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
 }

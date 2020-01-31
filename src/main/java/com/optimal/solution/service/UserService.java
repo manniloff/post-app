@@ -12,5 +12,7 @@ public interface UserService {
 
     int createOrUpdate(User newUser);
 
+    int update(User newUser);
+
     Optional<User> deleteById(int id);
 }

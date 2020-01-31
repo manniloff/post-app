@@ -14,4 +14,8 @@ public interface CommentService {
     int createOrUpdate(CommentDto newComment);
 
     Optional<Comment> deleteById(int id);
+
+    List<CommentDto> findAccountAll();
+
+    Optional<Comment> findByIdAccount(int id);
 }

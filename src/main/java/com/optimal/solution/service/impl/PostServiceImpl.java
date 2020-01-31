@@ -26,6 +26,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findAll() {
+        LOGGER.info("Getting list of Posts from db");
+        return postRepository.findAll();
+    }
+
+    @Override
+    public List<Post> findAccountAll() {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting list of Posts from db");
             return postRepository.findAll();
@@ -36,7 +42,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<Post> findById(int id) throws Exception {
+    public Optional<Post> findById(int id) {
+        LOGGER.info("Getting Post by Id - {} from db", id);
+        return postRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Post> findByIdAccount(int id) {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting Post by Id - {} from db", id);
             return postRepository.findById(id);

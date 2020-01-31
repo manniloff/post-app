@@ -56,6 +56,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int update(User newUser) {
+        return userRepository.findByLogin(newUser.getLogin())
+                .map(user -> {
+                    LOGGER.info("Updating User with Id - {} and Login - {}", user.getId(), user.getLogin());
+
+                    user.setPassword(newUser.getPassword());
+                    user.setActive(newUser.isActive());
+                    user.setRoles(Roles.USER);
+
+                    return userRepository.save(user).getId();
+                }).get();
+    }
+
+    @Override
     public Optional<User> deleteById(int id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
