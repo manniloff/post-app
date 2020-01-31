@@ -22,8 +22,12 @@ public class RegistrationController {
     @PostMapping(value = {"", "/"}, produces = "application/json")
     ResponseEntity<?> createUser(@RequestBody User newUser) {
         try {
-            LOGGER.info("Creating or updating a user");
-            return ResponseEntity.ok(userService.createOrUpdate(newUser));
+            int id = userService.create(newUser);
+            if (id != 0) {
+                LOGGER.info("Creating or updating a user");
+                return ResponseEntity.ok(id);
+            }
+            return ResponseEntity.ok("User with login - " + newUser.getLogin() + " exists! Change login and try again.");
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating an user!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

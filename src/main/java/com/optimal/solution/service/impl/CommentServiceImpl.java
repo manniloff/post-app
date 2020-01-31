@@ -4,6 +4,7 @@ import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.model.Comment;
 import com.optimal.solution.model.Post;
+import com.optimal.solution.model.User;
 import com.optimal.solution.repository.CommentRepository;
 import com.optimal.solution.service.CommentService;
 import com.optimal.solution.util.Roles;
@@ -63,6 +64,7 @@ public class CommentServiceImpl implements CommentService {
                     LOGGER.info("Updating comment with id - {}", comment.getId());
                     comment.setPost(new Post(newComment.getPostId()));
                     comment.setPostedDate(new Date());
+                    comment.setUser(new User(JwtRequestFilter.id));
                     comment.setText(newComment.getText());
 
                     return commentRepository.save(comment).getId();
@@ -72,6 +74,7 @@ public class CommentServiceImpl implements CommentService {
 
                     comment.setPost(new Post(newComment.getPostId()));
                     comment.setPostedDate(new Date());
+                    comment.setUser(new User(JwtRequestFilter.id));
                     comment.setText(newComment.getText());
 
                     return commentRepository.save(comment).getId();

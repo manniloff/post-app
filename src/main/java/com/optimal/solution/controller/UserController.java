@@ -1,9 +1,7 @@
 package com.optimal.solution.controller;
 
-import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.model.User;
 import com.optimal.solution.service.UserService;
-import com.optimal.solution.util.Roles;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +39,25 @@ public class UserController {
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> createOrUpdate(@RequestBody User newUser) {
+    ResponseEntity<?> create(@RequestBody User newUser) {
+        try {
+            int id = userService.create(newUser);
+            if (id != 0) {
+                LOGGER.info("Creating or updating a user");
+                return ResponseEntity.ok(id);
+            }
+            return ResponseEntity.ok("User with login - " + newUser.getLogin() + ", exists! Change login and try again.");
+        } catch (Exception e) {
+            LOGGER.error("Error with creating or updating an user!", e);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PutMapping(value = {"", "/"}, produces = "application/json")
+    ResponseEntity<?> update(@RequestBody User newUser) {
         try {
             LOGGER.info("Creating or updating a user");
-            return ResponseEntity.ok(userService.createOrUpdate(newUser));
+            return ResponseEntity.ok(userService.update(newUser));
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating an user!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -10,7 +10,7 @@ public interface UserService {
 
     Optional<User> findById(int id);
 
-    int createOrUpdate(User newUser);
+    int create(User newUser);
 
     int update(User newUser);
 

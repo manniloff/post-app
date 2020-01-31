@@ -31,28 +31,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int createOrUpdate(User newUser) {
-        return userRepository.findByLogin(newUser.getLogin())
-                .map(user -> {
-                    LOGGER.info("Updating User with Id - {} and Login - {}", user.getId(), user.getLogin());
+    public int create(User newUser) {
+        if (userRepository.findByLogin(newUser.getLogin()).isPresent()) {
+            LOGGER.info("Can't create user with login {}, this login exist", newUser.getLogin());
+            return 0;
+        }
 
-                    user.setPassword(newUser.getPassword());
-                    user.setActive(newUser.isActive());
-                    user.setRoles(newUser.getRoles().equals("null") ? Roles.USER : newUser.getRoles());
+        LOGGER.info("Creating User with login {}", newUser.getLogin());
 
-                    return userRepository.save(user).getId();
-                }).orElseGet(() -> {
-                    LOGGER.info("Creating User with login {}", newUser.getLogin());
+        User user = new User();
 
-                    User user = new User();
+        user.setLogin(newUser.getLogin());
+        user.setPassword(newUser.getPassword());
+        user.setActive(true);
+        user.setRoles(newUser.getRoles() == null ? Roles.USER : newUser.getRoles());
 
-                    user.setLogin(newUser.getLogin());
-                    user.setPassword(newUser.getPassword());
-                    user.setActive(true);
-                    user.setRoles(newUser.getRoles() == null ? Roles.USER : newUser.getRoles());
-
-                    return userRepository.save(user).getId();
-                });
+        return userRepository.save(user).getId();
     }
 
     @Override
