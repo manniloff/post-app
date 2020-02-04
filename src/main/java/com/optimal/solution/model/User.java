@@ -21,8 +21,10 @@ public class User {
     @NonNull
     private int id;
 
+    @Column(nullable = false)
     private String login;
 
+    @Column(nullable = false)
     private String password;
 
     private boolean active;

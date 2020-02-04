@@ -1,5 +1,6 @@
 package com.optimal.solution.controller;
 
+import com.optimal.solution.dto.ResponseJsonDto;
 import com.optimal.solution.model.Category;
 import com.optimal.solution.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -17,46 +18,46 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> findAll() {
+    ResponseEntity<ResponseJsonDto> findAll() {
         try {
             LOGGER.info("Getting list of categories!");
-            return ResponseEntity.ok(categoryService.findAll());
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.findAll()));
         } catch (Exception e) {
-            LOGGER.error("Error with getting list of categories!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on getting list of categories: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<?> findById(@PathVariable int id) {
+    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting category by id");
-            return ResponseEntity.ok(categoryService.findById(id));
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.findById(id)));
         } catch (Exception e) {
-            LOGGER.error("Error with getting category by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on getting category by id: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> createOrUpdate(@RequestBody Category newCategory) {
+    ResponseEntity<ResponseJsonDto> createOrUpdate(@RequestBody Category newCategory) {
         try {
             LOGGER.info("Creating or updating a category");
-            return ResponseEntity.ok(categoryService.createOrUpdate(newCategory));
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.createOrUpdate(newCategory)));
         } catch (Exception e) {
-            LOGGER.error("Error with creating or updating a category!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on creating or updating a category: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<?> deleteById(@PathVariable int id) {
+    ResponseEntity<ResponseJsonDto> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting category by id");
-            return ResponseEntity.ok(categoryService.deleteById(id));
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.deleteById(id)));
         } catch (Exception e) {
-            LOGGER.error("Error with deleting category by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on deleting category by id: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 }

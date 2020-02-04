@@ -1,16 +1,16 @@
 package com.optimal.solution.controller;
 
-import com.optimal.solution.dto.PostDto;
-import com.optimal.solution.model.Post;
+import com.optimal.solution.dto.ResponseJsonDto;
 import com.optimal.solution.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/posts")
@@ -20,29 +20,24 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> findAll() {
+    ResponseEntity<ResponseJsonDto> findAll() {
         try {
             LOGGER.info("Getting list of posts!");
-            return ResponseEntity.ok(postService.findAll());
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(postService.findAll()));
         } catch (Exception e) {
-            LOGGER.error("Error with getting list of posts!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on getting posts: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<?> findById(@PathVariable int id) {
+    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting post by id");
-            Optional<Post> post = postService.findById(id);
-            if(post.isPresent()){
-                return ResponseEntity.ok(post);
-            } else {
-                return ResponseEntity.ok("No post found with id " + id);
-            }
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(postService.findById(id)));
         } catch (Exception e) {
-            LOGGER.error("Error with getting post by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on getting post: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 }

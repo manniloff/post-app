@@ -1,5 +1,6 @@
 package com.optimal.solution.service.impl;
 
+import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.model.User;
 import com.optimal.solution.repository.UserRepository;
 import com.optimal.solution.service.UserService;
@@ -58,6 +59,9 @@ public class UserServiceImpl implements UserService {
                     user.setPassword(newUser.getPassword());
                     user.setActive(newUser.isActive());
                     user.setRoles(Roles.USER);
+                    if (JwtRequestFilter.role.equals("ADMIN")) {
+                        user.setRoles(newUser.getRoles() == null ? Roles.USER : newUser.getRoles());
+                    }
 
                     return userRepository.save(user).getId();
                 }).get();

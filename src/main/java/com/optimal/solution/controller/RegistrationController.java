@@ -1,5 +1,6 @@
 package com.optimal.solution.controller;
 
+import com.optimal.solution.dto.ResponseJsonDto;
 import com.optimal.solution.model.User;
 import com.optimal.solution.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +21,17 @@ public class RegistrationController {
     private final UserService userService;
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> createUser(@RequestBody User newUser) {
+    ResponseEntity<ResponseJsonDto> createUser(@RequestBody User newUser) {
         try {
             int id = userService.create(newUser);
             if (id != 0) {
-                LOGGER.info("Creating or updating a user");
-                return ResponseEntity.ok(id);
+                LOGGER.info("Registration new user");
+                return ResponseEntity.ok(ResponseJsonDto.buildOk(id));
             }
-            return ResponseEntity.ok("User with login - " + newUser.getLogin() + " exists! Change login and try again.");
+            return ResponseEntity.ok(ResponseJsonDto.buildOk("User with login - " + newUser.getLogin() + " exists! Change login and try again."));
         } catch (Exception e) {
-            LOGGER.error("Error with creating or updating an user!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on registration an user!", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 }

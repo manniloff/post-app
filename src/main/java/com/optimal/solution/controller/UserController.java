@@ -1,5 +1,6 @@
 package com.optimal.solution.controller;
 
+import com.optimal.solution.dto.ResponseJsonDto;
 import com.optimal.solution.model.User;
 import com.optimal.solution.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,61 +18,61 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> findAll() {
+    ResponseEntity<ResponseJsonDto> findAll() {
         try {
             LOGGER.info("Getting list of users!");
-            return ResponseEntity.ok(userService.findAll());
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.findAll()));
         } catch (Exception e) {
-            LOGGER.error("Error with getting list of users!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on getting list of users: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    ResponseEntity<?> findById(@PathVariable int id) {
+    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting user by id");
-            return ResponseEntity.ok(userService.findById(id));
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.findById(id)));
         } catch (Exception e) {
-            LOGGER.error("Error with getting user by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on getting user by id: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> create(@RequestBody User newUser) {
+    ResponseEntity<ResponseJsonDto> create(@RequestBody User newUser) {
         try {
             int id = userService.create(newUser);
             if (id != 0) {
                 LOGGER.info("Creating or updating a user");
-                return ResponseEntity.ok(id);
+                return ResponseEntity.ok(ResponseJsonDto.buildOk(id));
             }
-            return ResponseEntity.ok("User with login - " + newUser.getLogin() + ", exists! Change login and try again.");
+            return ResponseEntity.ok(ResponseJsonDto.buildOk("User with login - " + newUser.getLogin() + ", exists! Change login and try again."));
         } catch (Exception e) {
-            LOGGER.error("Error with creating or updating an user!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on creating or updating an user: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @PutMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> update(@RequestBody User newUser) {
+    ResponseEntity<ResponseJsonDto> update(@RequestBody User newUser) {
         try {
             LOGGER.info("Creating or updating a user");
-            return ResponseEntity.ok(userService.update(newUser));
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.update(newUser)));
         } catch (Exception e) {
-            LOGGER.error("Error with creating or updating an user!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on creating or updating an user: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<?> deleteById(@PathVariable int id) {
+    ResponseEntity<ResponseJsonDto> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting user by id");
-            return ResponseEntity.ok(userService.deleteById(id));
+            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.deleteById(id)));
         } catch (Exception e) {
-            LOGGER.error("Error with deleting user by id!", e);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            LOGGER.error("Exception on deleting user by id: ", e);
+            return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 }

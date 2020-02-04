@@ -4,6 +4,7 @@ import com.optimal.solution.auth.model.AuthRequest;
 import com.optimal.solution.auth.model.AuthResponse;
 import com.optimal.solution.auth.service.LoginDetailsService;
 import com.optimal.solution.auth.util.JwtUtil;
+import com.optimal.solution.dto.ResponseJsonDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +26,7 @@ public class AuthController {
 
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    public ResponseEntity<?> createAuthToken(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity<ResponseJsonDto> createAuthToken(@RequestBody AuthRequest authRequest) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getLogin(), authRequest.getPassword())
@@ -37,8 +38,8 @@ public class AuthController {
         final UserDetails loginDetails = loginDetailsService
                 .loadUserByUsername(authRequest.getLogin());
 
-        final String jwt = jwtUtil.generateToken(loginDetails);
+        final String token = jwtUtil.generateToken(loginDetails);
 
-        return ResponseEntity.ok(new AuthResponse(jwt));
+        return ResponseEntity.ok(ResponseJsonDto.buildOk(new AuthResponse(token)));
     }
 }
