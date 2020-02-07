@@ -12,7 +12,7 @@ pipeline {
         stage('Docker') {
             steps {
                 echo 'Start compose..'
-                bat 'docker-compose -f docker-compose.yml up'
+                bat 'docker-compose -d -f docker-compose.yml up'
             }
         }
         stage('Deploy') {
