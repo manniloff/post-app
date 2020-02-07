@@ -13,10 +13,8 @@ pipeline {
             }
         }
         stage('Test') {
-            agent { docker 'openjdk:8-jre' }
             steps {
                 echo 'Testing..'
-                sh 'java -version'
             }
         }
         stage('Deploy') {
