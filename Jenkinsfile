@@ -3,10 +3,13 @@ pipeline {
 
     stages {
         stage('Build') {
-            agent { docker 'maven:3-alpine' }
             steps {
                 echo 'Building..'
-                sh 'mvn --version'
+                withMaven (maven :'maven_3.5.0'){
+                    bat label: '', script: '''bat mvn clean
+                    bat mvn package'''
+                }
+                echo 'Building...'
             }
         }
         stage('Test') {
