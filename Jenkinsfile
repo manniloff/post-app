@@ -5,11 +5,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                withMaven (maven :'maven_3.5.0'){
-                    bat label: '', script: '''bat mvn clean
-                    bat mvn package'''
-                }
-                echo 'Building...'
+                bat "mvn clean"
+                bat "mvn package"
             }
         }
         stage('Test') {
