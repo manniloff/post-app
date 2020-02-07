@@ -9,9 +9,10 @@ pipeline {
                 bat "mvn package"
             }
         }
-        stage('Test') {
+        stage('Docker') {
             steps {
-                echo 'Testing..'
+                echo 'Start compose..'
+                bat 'docker-compose -f docker-compose/docker-compose.yml up'
             }
         }
         stage('Deploy') {
