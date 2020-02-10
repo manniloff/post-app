@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/registration")
 @RequiredArgsConstructor
 public class RegistrationController {
-    private final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger("rest");
     private final UserService userService;
 
     @PostMapping(value = {"", "/"}, produces = "application/json")

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("rest");
     private final CategoryService categoryService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")

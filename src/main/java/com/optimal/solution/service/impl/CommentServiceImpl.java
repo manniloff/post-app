@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("repo");
     private final CommentRepository commentRepository;
 
     @Override

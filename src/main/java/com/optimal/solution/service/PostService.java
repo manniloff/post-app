@@ -10,6 +10,7 @@ public interface PostService {
     List<Post> findAll();
 
     Optional<Post> findById(int id);
+
     Optional<Post> findByIdAccount(int id);
 
     int createOrUpdate(PostDto newPost);

@@ -12,8 +12,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"posts","comments"})
-@EqualsAndHashCode(exclude = {"posts","comments"})
+@ToString(exclude = {"posts", "comments"})
+@EqualsAndHashCode(exclude = {"posts", "comments"})
 public class User {
 
     @Id

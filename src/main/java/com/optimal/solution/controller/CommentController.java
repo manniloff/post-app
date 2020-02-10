@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/comments")
 @RequiredArgsConstructor
 public class CommentController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("rest");
     private final CommentService commentService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")

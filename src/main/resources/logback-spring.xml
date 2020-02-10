@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <timestamp key="myTimestamp" timeReference="contextBirth" datePattern="yyyy_MM_dd"/>
+
+    <appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5p [%-35c{0}] ==> %m%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/postapp.log</file>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5p [%-31c{1}] ==> %m%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_PATH}/archived/postapp_%d{dd_MM_yyyy}.log
+            </fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="RestAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/rest.log</file>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5p [%-31c{1}] ==> %m%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                logs/restapp_%d{dd_MM_yyyy}.log
+            </fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="RepoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/repo.log</file>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %-5p [%-31c{1}] ==> %m%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                logs/repo._%d{dd_MM_yyyy}.log
+            </fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="ConsoleAppender" />
+            <appender-ref ref="FileAppender" />
+        </root>
+        <logger name="com.optimal.solution" level="debug"/>
+        <logger name="rest" level="debug" additivity="false">
+            <appender-ref ref="ConsoleAppender" />
+            <appender-ref ref="RestAppender" />
+        </logger>
+        <logger name="repo" level="debug" additivity="false">
+            <appender-ref ref="ConsoleAppender" />
+            <appender-ref ref="RepoAppender" />
+        </logger>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="warn">
+            <appender-ref ref="FileAppender" />
+        </root>
+        <logger name="com.optimal.solution" level="info"/>
+        <logger name="rest" level="debug" additivity="false">
+            <appender-ref ref="RestAppender" />
+        </logger>
+    </springProfile>
+
+</configuration>

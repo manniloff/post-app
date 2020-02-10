@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("repo");
     private final CategoryRepository categoryRepository;
 
     @Override
@@ -39,9 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
                     category.setName(newCategory.getName());
                     category.setPosts(newCategory.getPosts()
                             .stream()
-                            .map(post -> {
-                                return new Post(post.getId());
-                            }).collect(Collectors.toSet()));
+                            .map(post -> new Post(post.getId())).collect(Collectors.toSet()));
 
                     return categoryRepository.save(category).getId();
                 }).orElseGet(() -> {
@@ -52,9 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
                     if (newCategory.getPosts() != null) {
                         category.setPosts(newCategory.getPosts()
                                 .stream()
-                                .map(post -> {
-                                    return new Post(post.getId());
-                                }).collect(Collectors.toSet()));
+                                .map(post -> new Post(post.getId())).collect(Collectors.toSet()));
                     }
 
                     return categoryRepository.save(category).getId();

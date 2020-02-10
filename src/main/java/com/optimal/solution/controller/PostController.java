@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PostController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("rest");
     private final PostService postService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")

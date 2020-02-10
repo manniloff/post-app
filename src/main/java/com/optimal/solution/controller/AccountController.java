@@ -24,7 +24,7 @@ import java.util.Optional;
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
 public class AccountController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("rest");
     private final UserService userService;
     private final PostService postService;
     private final CommentService commentService;

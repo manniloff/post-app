@@ -2,7 +2,6 @@ package com.optimal.solution.repository;
 
 import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.model.Comment;
-import com.optimal.solution.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

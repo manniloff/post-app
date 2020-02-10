@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PostServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("repo");
     private final PostRepository postRepository;
 
     @Override
