@@ -20,10 +20,10 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findAll() {
+    ResponseEntity<?> findAll() {
         try {
             LOGGER.info("Getting list of comments");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(commentService.findAll()));
+            return ResponseEntity.ok(commentService.findAll());
         } catch (Exception e) {
             LOGGER.error("Exception on getting comments: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -31,10 +31,10 @@ public class CommentController {
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
+    ResponseEntity<?> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting comment by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(commentService.findById(id)));
+            return ResponseEntity.ok(commentService.findById(id));
         } catch (Exception e) {
             LOGGER.error("Exception on getting comment by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -42,10 +42,10 @@ public class CommentController {
     }
 
     @RequestMapping(produces = "application/json")
-    ResponseEntity<ResponseJsonDto> badRequest(@PathVariable int id) {
+    ResponseEntity<?> badRequest(@PathVariable int id) {
         try {
             LOGGER.info("Getting comment by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildBadRequest("\"Bad Request\""));
+            return ResponseEntity.ok("\"Bad Request\"");
         } catch (Exception e) {
             LOGGER.error("Exception on getting comment by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

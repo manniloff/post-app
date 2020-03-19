@@ -18,10 +18,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findAll() {
+    ResponseEntity<?> findAll() {
         try {
             LOGGER.info("Getting list of users!");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.findAll()));
+            return ResponseEntity.ok(userService.findAll());
         } catch (Exception e) {
             LOGGER.error("Exception on getting list of users: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -29,10 +29,10 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
+    ResponseEntity<?> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting user by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.findById(id)));
+            return ResponseEntity.ok(userService.findById(id));
         } catch (Exception e) {
             LOGGER.error("Exception on getting user by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -40,14 +40,14 @@ public class UserController {
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> create(@RequestBody User newUser) {
+    ResponseEntity<?> create(@RequestBody User newUser) {
         try {
             int id = userService.create(newUser);
             if (id != 0) {
                 LOGGER.info("Creating or updating a user");
-                return ResponseEntity.ok(ResponseJsonDto.buildOk(id));
+                return ResponseEntity.ok(id);
             }
-            return ResponseEntity.ok(ResponseJsonDto.buildOk("User with login - " + newUser.getLogin() + ", exists! Change login and try again."));
+            return ResponseEntity.ok("User with login - " + newUser.getLogin() + ", exists! Change login and try again.");
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating an user: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -55,10 +55,10 @@ public class UserController {
     }
 
     @PutMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> update(@RequestBody User newUser) {
+    ResponseEntity<?> update(@RequestBody User newUser) {
         try {
             LOGGER.info("Creating or updating a user");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.update(newUser)));
+            return ResponseEntity.ok(userService.update(newUser));
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating an user: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -66,10 +66,10 @@ public class UserController {
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> deleteById(@PathVariable int id) {
+    ResponseEntity<?> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting user by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(userService.deleteById(id)));
+            return ResponseEntity.ok(userService.deleteById(id));
         } catch (Exception e) {
             LOGGER.error("Exception on deleting user by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
