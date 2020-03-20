@@ -26,9 +26,9 @@ public class RegistrationController {
             int id = userService.create(newUser);
             if (id != 0) {
                 LOGGER.info("Registration new user");
-                return ResponseEntity.ok(id);
+                return new ResponseEntity<>("Created", HttpStatus.CREATED);
             }
-            return ResponseEntity.ok("User with login - " + newUser.getLogin() + " exists! Change login and try again.");
+            return new ResponseEntity<>("User with login - " + newUser.getLogin() + " exists! Change login and try again.", HttpStatus.CONFLICT);
         } catch (Exception e) {
             LOGGER.error("Exception on registration an user!", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

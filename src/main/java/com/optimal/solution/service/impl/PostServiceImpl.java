@@ -1,7 +1,9 @@
 package com.optimal.solution.service.impl;
 
 import com.optimal.solution.auth.filter.JwtRequestFilter;
+import com.optimal.solution.dto.CommentsDto;
 import com.optimal.solution.dto.PostDto;
+import com.optimal.solution.dto.PostsDto;
 import com.optimal.solution.model.Category;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.model.User;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,36 +28,42 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
-    public List<Post> findAll() {
+    public List<PostsDto> findAll() {
         LOGGER.info("Getting list of Posts from db");
-        return postRepository.findAll();
+        List<Post> posts = postRepository.findAll();
+
+        return getDataPosts(posts);
     }
 
     @Override
-    public List<Post> findAccountAll() {
+    public List<PostsDto> findAccountAll() {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting list of Posts from db");
-            return postRepository.findAll();
+            List<Post> posts = postRepository.findAll();
+
+            return getDataPosts(posts);
         } else {
             LOGGER.info("Getting list of Posts from db");
-            return postRepository.findAllByUser(JwtRequestFilter.id);
+            List<Post> posts = postRepository.findAllByUser(JwtRequestFilter.id);
+
+            return getDataPosts(posts);
         }
     }
 
     @Override
-    public Optional<Post> findById(int id) {
+    public PostsDto findById(int id) {
         LOGGER.info("Getting Post by Id - {} from db", id);
-        return postRepository.findById(id);
+        return getDataPost(postRepository.findById(id).get());
     }
 
     @Override
-    public Optional<Post> findByIdAccount(int id) {
+    public PostsDto findByIdAccount(int id) {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting Post by Id - {} from db", id);
-            return postRepository.findById(id);
+            return getDataPost(postRepository.findById(id).get());
         } else {
             LOGGER.info("Getting list of Posts from db");
-            return postRepository.findByIdAndUser(id, JwtRequestFilter.id);
+            return getDataPost(postRepository.findByIdAndUser(id, JwtRequestFilter.id).get());
         }
     }
 
@@ -108,5 +117,57 @@ public class PostServiceImpl implements PostService {
             postRepository.deleteByIds(id);
         }
         return post;
+    }
+
+    private List<PostsDto> getDataPosts(List<Post> posts) {
+        return posts.stream().map(post -> {
+            PostsDto postDto = new PostsDto();
+
+            postDto.setId(post.getId());
+            postDto.setBody(post.getBody());
+            postDto.setCategoriesName(post.getCategories().stream().map(Category::getName).findFirst().get());
+            postDto.setAuthor(post.getUser().getLogin());
+            postDto.setCreateDate(post.getCreateDate());
+            postDto.setTitle(post.getTitle());
+
+            Set<CommentsDto> commentsDtoSet = post.getComments().stream().map(comment -> {
+                CommentsDto commentDto = new CommentsDto();
+
+                commentDto.setText(comment.getText());
+                commentDto.setPostedDate(comment.getPostedDate());
+                commentDto.setUserName(comment.getUser().getLogin());
+
+                return commentDto;
+            }).collect(Collectors.toSet());
+
+            postDto.setComment(commentsDtoSet);
+
+            return postDto;
+        }).collect(Collectors.toList());
+    }
+
+    private PostsDto getDataPost(Post post) {
+        PostsDto postsDto = new PostsDto();
+
+        postsDto.setTitle(post.getTitle());
+        postsDto.setAuthor(post.getUser().getLogin());
+        postsDto.setId(post.getId());
+        postsDto.setBody(post.getBody());
+        postsDto.setCreateDate(post.getCreateDate());
+        postsDto.setCategoriesName(post.getCategories().stream().map(Category::getName).findFirst().get());
+
+        Set<CommentsDto> commentsDtoSet = post.getComments().stream().map(comment -> {
+            CommentsDto commentDto = new CommentsDto();
+
+            commentDto.setText(comment.getText());
+            commentDto.setPostedDate(comment.getPostedDate());
+            commentDto.setUserName(comment.getUser().getLogin());
+
+            return commentDto;
+        }).collect(Collectors.toSet());
+
+        postsDto.setComment(commentsDtoSet);
+
+        return postsDto;
     }
 }

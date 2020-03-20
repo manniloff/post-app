@@ -2,6 +2,7 @@ package com.optimal.solution.auth;
 
 import com.optimal.solution.auth.service.LoginDetailsService;
 import com.optimal.solution.auth.util.JwtUtil;
+import com.optimal.solution.dto.PostsDto;
 import com.optimal.solution.model.Post;
 import com.optimal.solution.model.User;
 import com.optimal.solution.repository.UserRepository;
@@ -81,7 +82,7 @@ public class AuthTest {
 
     @Test
     public void infoTest() {
-        List<Post> postList = postService.findAll();
+        List<PostsDto> postList = postService.findAll();
 
         int id = postList.get(0).getId();
 

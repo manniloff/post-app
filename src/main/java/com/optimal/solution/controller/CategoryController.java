@@ -43,7 +43,8 @@ public class CategoryController {
     ResponseEntity<?> createOrUpdate(@RequestBody Category newCategory) {
         try {
             LOGGER.info("Creating or updating a category");
-            return ResponseEntity.ok(categoryService.createOrUpdate(newCategory));
+            categoryService.createOrUpdate(newCategory);
+            return new ResponseEntity<>("Created", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating a category: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

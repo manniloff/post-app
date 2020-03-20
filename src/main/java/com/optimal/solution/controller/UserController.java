@@ -45,20 +45,23 @@ public class UserController {
             int id = userService.create(newUser);
             if (id != 0) {
                 LOGGER.info("Creating or updating a user");
-                return ResponseEntity.ok(id);
+                return new ResponseEntity<>("Created",HttpStatus.CREATED);
             }
-            return ResponseEntity.ok("User with login - " + newUser.getLogin() + ", exists! Change login and try again.");
+            return new ResponseEntity<>("User with login - " + newUser.getLogin() + ", exists! Change login and try again.", HttpStatus.CONFLICT);
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating an user: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
         }
     }
 
-    @PutMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<?> update(@RequestBody User newUser) {
+    @PutMapping(value = "/{id}", produces = "application/json")
+    ResponseEntity<?> update(@RequestBody User newUser,@PathVariable int id) {
         try {
             LOGGER.info("Creating or updating a user");
-            return ResponseEntity.ok(userService.update(newUser));
+            if(userService.update(newUser,id) !=0){
+                return ResponseEntity.ok(userService.update(newUser,id));
+            }
+            return new ResponseEntity<>("Not Modified", HttpStatus.NOT_MODIFIED);
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating an user: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -69,7 +72,7 @@ public class UserController {
     ResponseEntity<?> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting user by id");
-            return ResponseEntity.ok(userService.deleteById(id));
+            return ResponseEntity.ok("Deleted user with id - " + id);
         } catch (Exception e) {
             LOGGER.error("Exception on deleting user by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

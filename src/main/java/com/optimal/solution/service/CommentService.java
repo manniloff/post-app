@@ -9,13 +9,13 @@ import java.util.Optional;
 public interface CommentService {
     List<CommentDto> findAll();
 
-    Optional<Comment> findById(int id);
+    Optional<CommentDto> findById(int id);
 
-    int createOrUpdate(CommentDto newComment);
+    void createOrUpdate(CommentDto newComment);
 
     Optional<Comment> deleteById(int id);
 
     List<CommentDto> findAccountAll();
 
-    Optional<Comment> findByIdAccount(int id);
+    Optional<CommentDto> findByIdAccount(int id);
 }

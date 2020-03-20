@@ -3,8 +3,7 @@ package com.optimal.solution.controller;
 import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.dto.PostDto;
-import com.optimal.solution.model.Comment;
-import com.optimal.solution.model.Post;
+import com.optimal.solution.dto.PostsDto;
 import com.optimal.solution.model.User;
 import com.optimal.solution.service.CommentService;
 import com.optimal.solution.service.PostService;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.Optional;
 
 @Controller
@@ -44,7 +42,8 @@ public class AccountController {
     ResponseEntity<?> createOrUpdateUser(@RequestBody User newUser) {
         try {
             LOGGER.info("Creating or updating a user");
-            return ResponseEntity.ok(userService.update(newUser));
+            userService.update(newUser, newUser.getId());
+            return new ResponseEntity<>("Created", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating an user!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -65,13 +64,9 @@ public class AccountController {
     @GetMapping(value = "/posts/{id}", produces = "application/json")
     ResponseEntity<?> findByIdPost(@PathVariable int id) {
         try {
-            Optional<Post> post = postService.findByIdAccount(id);
-            if(post.isPresent()){
-                LOGGER.info("Getting list of post for user - {} ", JwtRequestFilter.id);
-                return ResponseEntity.ok(post);
-            } else {
-                return ResponseEntity.ok("No post found with id " + id);
-            }
+            PostsDto post = postService.findByIdAccount(id);
+            LOGGER.info("Getting list of post for user - {} ", JwtRequestFilter.id);
+            return ResponseEntity.ok(post);
         } catch (Exception e) {
             LOGGER.error("Error with getting user by id!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -82,7 +77,8 @@ public class AccountController {
     ResponseEntity<?> createOrUpdatePost(@RequestBody PostDto newPost) {
         try {
             LOGGER.info("Creating or updating a post");
-            return ResponseEntity.ok(postService.createOrUpdate(newPost));
+            postService.createOrUpdate(newPost);
+            return new ResponseEntity<>("Created", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating a post!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -93,11 +89,7 @@ public class AccountController {
     ResponseEntity<?> deleteByIdPost(@PathVariable int id) {
         try {
             LOGGER.info("Deleting post by id");
-            if (postService.findById(id).isPresent()) {
-                return ResponseEntity.ok(postService.deleteById(id));
-            } else {
-                return ResponseEntity.ok("No post found with id " + id);
-            }
+            return ResponseEntity.ok(postService.deleteById(id));
         } catch (Exception e) {
             LOGGER.error("Error with deleting post by id!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -118,8 +110,8 @@ public class AccountController {
     @GetMapping(value = "/comments/{id}", produces = "application/json")
     ResponseEntity<?> findByIdComment(@PathVariable int id) {
         try {
-            Optional<Comment> comment = commentService.findByIdAccount(id);
-            if(comment.isPresent()){
+            Optional<CommentDto> comment = commentService.findByIdAccount(id);
+            if (comment.isPresent()) {
                 LOGGER.info("Getting list of comment for user - {} ", JwtRequestFilter.id);
                 return ResponseEntity.ok(comment);
             } else {
@@ -135,7 +127,8 @@ public class AccountController {
     ResponseEntity<?> createOrUpdateComment(@RequestBody CommentDto newComment) {
         try {
             LOGGER.info("Creating or updating a comment");
-            return ResponseEntity.ok(commentService.createOrUpdate(newComment));
+            commentService.createOrUpdate(newComment);
+            return new ResponseEntity<>("Created", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating a comment!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

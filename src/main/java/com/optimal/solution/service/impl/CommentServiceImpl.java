@@ -41,25 +41,25 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<Comment> findByIdAccount(int id) {
+    public Optional<CommentDto> findByIdAccount(int id) {
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting Comment by id - {}", id);
-            return commentRepository.findById(id);
+            return commentRepository.findByIdDto(id);
         } else {
             LOGGER.info("Getting list of Posts from db");
-            return commentRepository.findByIdAndUser(id, JwtRequestFilter.id);
+            return commentRepository.findByIdAndUserDto(id, JwtRequestFilter.id);
         }
     }
 
     @Override
-    public Optional<Comment> findById(int id) {
+    public Optional<CommentDto> findById(int id) {
         LOGGER.info("Getting Comment by id - {}", id);
-        return commentRepository.findById(id);
+        return commentRepository.findByIdDto(id);
     }
 
     @Override
-    public int createOrUpdate(CommentDto newComment) {
-        return commentRepository.findByIdAndUser(newComment.getId(), JwtRequestFilter.id)
+    public void createOrUpdate(CommentDto newComment) {
+        commentRepository.findByIdAndUser(newComment.getId(), JwtRequestFilter.id)
                 .map(comment -> {
                     LOGGER.info("Updating comment with id - {}", comment.getId());
                     comment.setPost(new Post(newComment.getPostId()));
@@ -69,16 +69,16 @@ public class CommentServiceImpl implements CommentService {
 
                     return commentRepository.save(comment).getId();
                 }).orElseGet(() -> {
-                    LOGGER.info("Creating comment with id - {}", newComment.getId());
-                    Comment comment = new Comment();
+            LOGGER.info("Creating comment with id - {}", newComment.getId());
+            Comment comment = new Comment();
 
-                    comment.setPost(new Post(newComment.getPostId()));
-                    comment.setPostedDate(new Date());
-                    comment.setUser(new User(JwtRequestFilter.id));
-                    comment.setText(newComment.getText());
+            comment.setPost(new Post(newComment.getPostId()));
+            comment.setPostedDate(new Date());
+            comment.setUser(new User(JwtRequestFilter.id));
+            comment.setText(newComment.getText());
 
-                    return commentRepository.save(comment).getId();
-                });
+            return commentRepository.save(comment).getId();
+        });
     }
 
     @Override

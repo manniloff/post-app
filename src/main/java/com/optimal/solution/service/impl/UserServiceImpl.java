@@ -1,6 +1,7 @@
 package com.optimal.solution.service.impl;
 
 import com.optimal.solution.auth.filter.JwtRequestFilter;
+import com.optimal.solution.dto.UserDto;
 import com.optimal.solution.model.User;
 import com.optimal.solution.repository.UserRepository;
 import com.optimal.solution.service.UserService;
@@ -20,15 +21,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<User> findAll() {
+    public List<UserDto> findAll() {
         LOGGER.info("Getting list of Users from db");
-        return userRepository.findAll();
+        return userRepository.findAllUsers();
     }
 
     @Override
-    public Optional<User> findById(int id) {
+    public Optional<UserDto> findById(int id) {
         LOGGER.info("Getting User by Id - {} from db", id);
-        return userRepository.findById(id);
+        return userRepository.findByIdUsers(id);
     }
 
     @Override
@@ -51,29 +52,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int update(User newUser) {
-        return userRepository.findByLogin(newUser.getLogin())
-                .map(user -> {
-                    LOGGER.info("Updating User with Id - {} and Login - {}", user.getId(), user.getLogin());
+    public int update(User newUser, int id) {
+        if (userRepository.findById(id).isPresent()) {
+            return userRepository.findByLogin(newUser.getLogin())
+                    .map(user -> {
+                        LOGGER.info("Updating User with Id - {} and Login - {}", user.getId(), user.getLogin());
 
-                    user.setPassword(newUser.getPassword());
-                    user.setActive(newUser.isActive());
-                    user.setRoles(Roles.USER);
-                    if (JwtRequestFilter.role.equals("ADMIN")) {
-                        user.setRoles(newUser.getRoles() == null ? Roles.USER : newUser.getRoles());
-                    }
+                        user.setPassword(newUser.getPassword());
+                        user.setActive(newUser.isActive());
+                        user.setRoles(Roles.USER);
+                        if (JwtRequestFilter.role.equals("ADMIN")) {
+                            user.setRoles(newUser.getRoles() == null ? Roles.USER : newUser.getRoles());
+                        }
 
-                    return userRepository.save(user).getId();
-                }).get();
+                        return userRepository.save(user).getId();
+                    }).get();
+        }
+
+        return 0;
     }
 
     @Override
-    public Optional<User> deleteById(int id) {
+    public void deleteById(int id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             LOGGER.info("Deleting User by Id - {} from db", id);
             userRepository.deleteById(id);
         }
-        return user;
     }
 }
