@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Test') {
+                    steps {
+                        echo 'Testing..'
+                        bat "mvn test"
+                    }
+                }
         stage('Build') {
             steps {
                 echo 'Building..'

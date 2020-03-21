@@ -21,14 +21,14 @@ public class RegistrationController {
     private final UserService userService;
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> createUser(@RequestBody User newUser) {
+    ResponseEntity<?> createUser(@RequestBody User newUser) {
         try {
             int id = userService.create(newUser);
             if (id != 0) {
                 LOGGER.info("Registration new user");
-                return ResponseEntity.ok(ResponseJsonDto.buildOk(id));
+                return new ResponseEntity<>("Created", HttpStatus.CREATED);
             }
-            return ResponseEntity.ok(ResponseJsonDto.buildOk("User with login - " + newUser.getLogin() + " exists! Change login and try again."));
+            return new ResponseEntity<>("User with login - " + newUser.getLogin() + " exists! Change login and try again.", HttpStatus.CONFLICT);
         } catch (Exception e) {
             LOGGER.error("Exception on registration an user!", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

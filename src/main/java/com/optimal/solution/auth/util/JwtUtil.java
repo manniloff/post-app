@@ -1,6 +1,7 @@
 package com.optimal.solution.auth.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
@@ -31,12 +32,17 @@ public class JwtUtil {
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         LOGGER.info("Extracting claim");
         final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        return claims != null ? claimsResolver.apply(claims) : null;
     }
 
     private Claims extractAllClaims(String token) {
         LOGGER.info("Extracting all claims");
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e){
+            LOGGER.error(e.getMessage());
+        }
+        return null;
     }
 
     private Boolean isTokenExpired(String token) {

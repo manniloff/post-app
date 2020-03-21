@@ -18,10 +18,10 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findAll() {
+    ResponseEntity<?> findAll() {
         try {
             LOGGER.info("Getting list of categories!");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.findAll()));
+            return ResponseEntity.ok(categoryService.findAll());
         } catch (Exception e) {
             LOGGER.error("Exception on getting list of categories: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -29,10 +29,10 @@ public class CategoryController {
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
+    ResponseEntity<?> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting category by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.findById(id)));
+            return ResponseEntity.ok(categoryService.findById(id));
         } catch (Exception e) {
             LOGGER.error("Exception on getting category by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -40,10 +40,11 @@ public class CategoryController {
     }
 
     @PostMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> createOrUpdate(@RequestBody Category newCategory) {
+    ResponseEntity<?> createOrUpdate(@RequestBody Category newCategory) {
         try {
             LOGGER.info("Creating or updating a category");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.createOrUpdate(newCategory)));
+            categoryService.createOrUpdate(newCategory);
+            return new ResponseEntity<>("Created", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating a category: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -51,10 +52,10 @@ public class CategoryController {
     }
 
     @DeleteMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> deleteById(@PathVariable int id) {
+    ResponseEntity<?> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting category by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(categoryService.deleteById(id)));
+            return ResponseEntity.ok(categoryService.deleteById(id));
         } catch (Exception e) {
             LOGGER.error("Exception on deleting category by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

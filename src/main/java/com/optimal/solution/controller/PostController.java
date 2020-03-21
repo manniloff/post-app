@@ -20,10 +20,10 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping(value = {"", "/"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findAll() {
+    ResponseEntity<?> findAll() {
         try {
             LOGGER.info("Getting list of posts!");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(postService.findAll()));
+            return ResponseEntity.ok(postService.findAll());
         } catch (Exception e) {
             LOGGER.error("Exception on getting posts: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -31,10 +31,10 @@ public class PostController {
     }
 
     @GetMapping(value = {"/{id}"}, produces = "application/json")
-    ResponseEntity<ResponseJsonDto> findById(@PathVariable int id) {
+    ResponseEntity<?> findById(@PathVariable int id) {
         try {
             LOGGER.info("Getting post by id");
-            return ResponseEntity.ok(ResponseJsonDto.buildOk(postService.findById(id)));
+            return ResponseEntity.ok(postService.findById(id));
         } catch (Exception e) {
             LOGGER.error("Exception on getting post: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

@@ -61,7 +61,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             role = user.get().getRoles();
         }
 
-        System.out.println(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
