@@ -1,0 +1,51 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "User Schema",
+	"description": "JSON Schema Definition for user.",
+	"definitions": {
+		"login": {
+			"type": "string",
+			"title": "Username for authirization",
+			"description": "Username for connecting and getting permition for writing post and comments"
+		},
+		"password": {
+			"type": "string",
+			"title": "Password for authorization",
+			"description": "Password for connecting and getting permition for writing post and comments"
+		},
+		"active": {
+			"type": "boolean",
+			"title": "isActive",
+			"description": "Field to verify if user is active and have access"
+		},
+    "roles": {
+			"type": "string",
+			"title": "Users role",
+			"description": "Role for a user",
+			"enum": [
+				"ADMIN",
+				"USER"
+			]
+		}
+  },
+  "type": "object",
+	"properties": {
+		"login": {
+			"$ref": "#/definitions/login"
+		},
+		"password": {
+			"$ref": "#/definitions/password"
+		},
+		"active": {
+			"$ref": "#/definitions/active"
+		},
+    "roles": {
+			"$ref": "#/definitions/roles"
+		}
+	},
+	"required": [
+		"login",
+		"password",
+		"roles"
+	]  
+}

@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "title": "Politics Post",
+        "body": "Some text about politics",
+        "createDate": "2020-03-20T15:47:13.000+0000",
+        "author": "user",
+        "categoriesName": "Politics",
+        "comment": [
+            {
+                "text": "Politics Comment",
+                "postedDate": "2020-03-20T15:47:13.000+0000",
+                "userName": "user"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Business Post",
+        "body": "Some text about business",
+        "createDate": "2020-03-20T15:47:13.000+0000",
+        "author": "user",
+        "categoriesName": "Business",
+        "comment": [
+            {
+                "text": "Business Post",
+                "postedDate": "2020-03-20T15:47:13.000+0000",
+                "userName": "user"
+            }
+        ]
+    }
+]

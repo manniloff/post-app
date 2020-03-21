@@ -1,0 +1,8 @@
+{
+    "status": "520",
+    "code": "BACKEND_ERROR",
+    "type": "Backend Error",
+    "message": "Unexpected error occurred during the booking.",
+    "time": "2019-05-23T05:34:43+0000",
+    "reference_id": "00366495-e705-4caa-82d6-33c84d49f39a"
+}

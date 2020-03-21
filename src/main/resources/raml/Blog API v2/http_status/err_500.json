@@ -1,0 +1,8 @@
+{
+  "status": "500",
+  "code": "INTERNAL_SERVER_ERROR",
+  "type": "System Error",
+  "time": "2019-05-25T18:59:16+0100",
+  "message": "Unable to fulfil request due to internal error.",
+  "reference_id": "3a015fc1-d613-4278-b805-af01658c7034"
+}

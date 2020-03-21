@@ -1,0 +1,30 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Login Schema",
+	"description": "JSON Schema Definition for login.",
+	"definitions": {
+		"login": {
+			"type": "string",
+			"title": "Username for authirization",
+			"description": "Username for connecting and getting permition for writing post and comments"
+		},
+		"password": {
+			"type": "string",
+			"title": "Password for authorization",
+			"description": "Password for connecting and getting permition for writing post and comments"
+		}
+  },
+  "type": "object",
+	"properties": {
+		"login": {
+			"$ref": "#/definitions/login"
+		},
+		"password": {
+			"$ref": "#/definitions/password"
+		}
+	},
+	"required": [
+		"login",
+		"password"
+	]  
+}

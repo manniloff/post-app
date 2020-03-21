@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Category Schema",
+	"description": "JSON Schema Definition for category.",
+	"definitions": {
+		"name": {
+			"type": "string",
+			"title": "Category name",
+			"description": "Name of category which can be choosen by user, when he create a post"
+		}
+  },
+  "type": "object",
+	"properties": {
+		"name": {
+			"$ref": "#/definitions/name"
+		}
+	},
+	"required": [
+		"name"
+	]  
+}

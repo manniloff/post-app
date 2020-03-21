@@ -1,0 +1,9 @@
+{
+  "status": "504",
+  "code": "GATEWAY_TIMEOUT",
+  "type": "Connection Error",
+  "time": "2019-05-26T17:31:00+0100",
+  "message": "Unable to connect to upstream service.",
+  "description": "Request timed out.",
+  "reference_id": "e26bfc0c-bcda-4c45-908e-7a98531f66ae"
+}

@@ -1,0 +1,47 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Comment Schema",
+	"description": "JSON Schema Definition for comment.",
+	"definitions": {
+    "posted_date": {
+			"type": "string",
+			"title": "Comment posted Date",
+			"description": "Date Time when the comment was written. Format yyyy-MM-ddThh:mm:ss+01:00",
+			"format": "date-time"
+		},
+		"text": {
+			"type": "string",
+			"title": "Comment body",
+			"description": "Body of an comment about concret post"
+		},
+		"postId": {
+			"type": "integer",
+			"title": "Unique number of post",
+			"description": "Identification number of post for which comment was written"
+		},
+		"user_id": {
+			"type": "integer",
+			"title": "Unique number of user",
+			"description": "Identification number of user who written a comment"
+		}
+  },
+  "type": "object",
+	"properties": {
+		"posted_date": {
+			"$ref": "#/definitions/posted_date"
+		},
+		"text": {
+			"$ref": "#/definitions/text"
+		},
+		"postId": {
+			"$ref": "#/definitions/postId"
+		},
+    "user_id": {
+			"$ref": "#/definitions/user_id"
+		}
+	},
+	"required": [
+		"text",
+		"postId"
+	]  
+}

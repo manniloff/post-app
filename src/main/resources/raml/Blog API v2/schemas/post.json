@@ -1,0 +1,64 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Post Schema",
+	"description": "JSON Schema Definition for post.",
+	"definitions": {
+		"body": {
+			"type": "string",
+			"title": "Post content",
+			"description": "Username for connecting and getting permition for writing post and comments"
+		},
+    "create_date": {
+			"type": "string",
+			"title": "Post created date",
+			"description": "Date Time when the post was written. Format yyyy-MM-ddThh:mm:ss+01:00",
+			"format": "date-time"
+		},
+		"title": {
+			"type": "string",
+			"title": "Post title",
+			"description": "Title of the post"
+		},
+    "update_date": {
+			"type": "string",
+			"title": "Post updated date",
+			"description": "Date Time when the post was modificated. Format yyyy-MM-ddThh:mm:ss+01:00",
+			"format": "date-time"
+		},
+		"user_id": {
+			"type": "integer",
+			"title": "Unique number of user",
+			"description": "Identification number of user who written a comment"
+		},
+    "categories_id": {
+			"type": "array",
+			"title": "Unique numbers of categories",
+			"description": "Identification numbers of categories where current post can be entered"
+		}
+  },
+  "type": "object",
+	"properties": {
+		"body": {
+			"$ref": "#/definitions/body"
+		},
+		"create_date": {
+			"$ref": "#/definitions/create_date"
+		},
+		"title": {
+			"$ref": "#/definitions/title"
+		},
+    "update_date": {
+			"$ref": "#/definitions/update_date"
+		},
+    "user_id": {
+			"$ref": "#/definitions/user_id"
+		},
+    "categories_id": {
+			"$ref": "#/definitions/categories_id"
+		}
+	},
+	"required": [
+		"body",
+		"title"
+	]  
+}

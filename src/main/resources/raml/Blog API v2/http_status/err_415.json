@@ -1,0 +1,9 @@
+{
+    "status": "415",
+    "code": "UNSUPPORTED_MEDIA_TYPE",
+    "type": "Contract Violation",
+    "time": "2019-05-28T10:57:20+0000",
+    "message": "API contract violation, please check the API documentation",
+    "description": "The media type is not supported for method and resource.",
+    "reference_id": "5805009e-6c13-476a-8c99-2cc7c9cf0dab"
+}

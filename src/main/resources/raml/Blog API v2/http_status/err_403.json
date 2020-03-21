@@ -1,0 +1,9 @@
+{
+    "status": "403",
+    "code": "FORBIDDEN",
+    "type": "Authorization Error",
+    "time": "2019-05-26T11:55:35+0000",
+    "message": "Generic Message",
+    "description": "Detailed Message",
+    "reference_id": "9a8bfab5-baf6-4684-82f9-ceb5010be996"
+}

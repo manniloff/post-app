@@ -1,0 +1,12 @@
+{
+  "main": "posts-app.raml",
+  "name": "s",
+  "classifier": "raml",
+  "tags": [],
+  "groupId": "9265d076-3720-4da1-894c-6b8b6fd587fd",
+  "assetId": "s",
+  "version": "1.0.2",
+  "apiVersion": "1",
+  "backwardsCompatible": false,
+  "publishWithRefFiles": true
+}

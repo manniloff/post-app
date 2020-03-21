@@ -1,0 +1,142 @@
+- secured:
+    usage: Apply this to any method that needs to be secured
+    description: All requests that require api key
+    headers:
+      Authorization:
+        description: The authentication details to use the Post Application API. The client id and client secret should be passed as follows for all endpoints in the following format 
+        type: string
+        example: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNTgwNTgyNjkwLCJpYXQiOjE1ODA1NDY2OTB9.U2KQr-gl3VQbpvQBQMFv6xle9gD17-JCuhy7qga64vU"
+        required: true
+
+- get_errors:
+      responses:
+        204:
+          body:
+            application/json:
+              example: !include ./http_status/err_204.json
+        400:
+          body:
+            application/json:
+              example: !include ./http_status/err_400.json
+        401:
+          body:
+            application/json:
+              example: !include ./http_status/err_401.json      
+        403:
+          body:
+            application/json:
+              example: !include ./http_status/err_403.json
+        404:
+          body:
+            application/json:
+              example: !include ./http_status/err_404.json
+        405:
+          body:
+            application/json:
+              example: !include ./http_status/err_405.json
+        406:
+          body:
+            application/json:
+              example: !include ./http_status/err_406.json
+        415:
+          body:
+            application/json:
+              example: !include ./http_status/err_415.json
+        500:
+          body:
+            application/json:
+              example: !include ./http_status/err_500.json
+        502:
+          body:
+            application/json:
+              example: !include ./http_status/err_502.json
+        504:
+          body:
+            application/json:
+              example: !include ./http_status/err_504.json
+        520:
+          body:
+            application/json:
+              example: !include ./http_status/err_520.json  
+
+- put_post_errors:
+      responses:  
+        204:
+          body:
+            application/json:
+              example: !include ./http_status/err_204.json
+        304:
+          body:
+            application/json:
+              example: !include ./http_status/err_304.json
+        400:
+          body:
+            application/json:
+              example: !include ./http_status/err_400.json
+        401:
+          body:
+            application/json:
+              example: !include ./http_status/err_401.json      
+        403:
+          body:
+            application/json:
+              example: !include ./http_status/err_403.json
+        405:
+          body:
+            application/json:
+              example: !include ./http_status/err_405.json
+        500:
+          body:
+            application/json:
+              example: !include ./http_status/err_500.json
+        502:
+          body:
+            application/json:
+              example: !include ./http_status/err_502.json
+        504:
+          body:
+            application/json:
+              example: !include ./http_status/err_504.json
+        520:
+          body:
+            application/json:
+              example: !include ./http_status/err_520.json          
+
+- delete_errors:
+      responses:
+        202:
+          body:
+            application/json:
+              example: !include ./http_status/err_202.json
+        204:
+          body:
+            application/json:
+              example: !include ./http_status/err_204.json
+        401:
+          body:
+            application/json:
+              example: !include ./http_status/err_401.json      
+        403:
+          body:
+            application/json:
+              example: !include ./http_status/err_403.json
+        404:
+          body:
+            application/json:
+              example: !include ./http_status/err_404.json
+        500:
+          body:
+            application/json:
+              example: !include ./http_status/err_500.json
+        502:
+          body:
+            application/json:
+              example: !include ./http_status/err_502.json
+        504:
+          body:
+            application/json:
+              example: !include ./http_status/err_504.json
+        520:
+          body:
+            application/json:
+              example: !include ./http_status/err_520.json                                    

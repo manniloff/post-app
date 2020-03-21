@@ -1,0 +1,9 @@
+{
+    "status": "404",
+    "code": "RESOURCE_NOT_FOUND",
+    "type": "Contract Violation",
+    "time": "2019-05-25T11:18:42+0000",
+    "message": "API contract violation, please check the API documentation",
+    "description": "No matching patterns for URI.",
+    "reference_id": "390b9842-cddf-42fa-8afc-2baf61b215e1"
+}

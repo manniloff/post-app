@@ -1,0 +1,413 @@
+#%RAML 0.8 
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/c8835290-99b5-4975-9119-2b9233deea7f/ # 
+title: posts-app
+mediaType:
+  - application/json
+version: 1
+traits:
+   !include ./traits.raml
+protocols:
+  - HTTPS
+  - HTTP
+/registation:
+  description: registration for more permisions
+  is: [put_post_errors]
+  post:
+    description: create an user
+    body: 
+      application/json: 
+        example:
+          {
+            "login": "user",
+            "password": "user"
+          }
+        schema: !include ./schemas/registration.json  
+    responses:
+      201:
+          body:
+            application/json:
+              example:
+                {
+                  "Created"
+                }
+                 
+/login:
+  description: login in the system
+  is: [put_post_errors]
+  post:
+    description: authorizating in the system
+    body: 
+      application/json: 
+        example:
+          {
+            "login": "user",
+            "password": "user"
+          }
+        schema: !include ./schemas/login.json 
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNTgwNTgyNjkwLCJpYXQiOjE1ODA1NDY2OTB9.U2KQr-gl3VQbpvQBQMFv6xle9gD17-JCuhy7qga64vU"
+
+              }
+
+/users:
+  description: users which can create posts,commentaries
+  get:
+    is: [secured, get_errors]
+    description: get list of users
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/users.json
+  post:
+    is: [secured, put_post_errors]
+    description: create user
+    body: 
+            application/json: 
+                example:
+                  {
+                    "login": "user",
+                    "password": "user",
+                    "roles": "ADMIN"
+                  }
+                schema: !include ./schemas/user.json
+    headers:
+      Authorization: string
+    responses:
+      201:
+          body:
+            application/json:
+              example:
+                {
+                  "Created"
+                }
+  put:
+    is: [secured, put_post_errors]
+    description: update user
+    body: 
+      application/json: 
+        example:
+          {
+            "login": "user",
+            "password": "user",
+            "active": true,
+            "roles": "ADMIN"
+          }
+        schema: !include ./schemas/user.json  
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/user.json
+  /{id}:
+    uriParameters: 
+        id: 
+          description: An unique id number of user.
+          example: "1"
+    get:
+      is: [secured, get_errors]
+      description: Get user by id
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ./examples/user.json         
+    delete:
+      is: [secured, delete_errors]
+      description: delete user by id
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  1
+                }
+
+/categories:
+  description: categories for posts
+  get:
+    is: [secured, get_errors]
+    description: get list of categories
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/categories.json
+  post:
+    is: [secured, put_post_errors]
+    description: create or update category
+    body: 
+      application/json: 
+        example:
+          {
+           "name": "Physic"
+          }
+        schema: !include ./schemas/category.json  
+    headers:
+      Authorization: string
+    responses:
+      201:
+          body:
+            application/json:
+              example:
+                {
+                  "Created or Updated"
+                }
+
+  /{id}:
+    uriParameters: 
+        id: 
+          description: An unique id number of category.
+          example: "1"
+    get:
+      is: [secured, get_errors]
+      description: Get category by id
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ./examples/category.json
+    delete:
+      is: [secured, delete_errors]
+      description: delete category by id
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  1
+                }
+
+/posts:
+  description: posts about anything
+  get:
+    is: [secured, get_errors]
+    description: get list of posts
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/posts.json
+  /{id}:
+    uriParameters: 
+        id: 
+          description: An unique id number of post.
+          example: "1"
+    get:
+      is: [secured, get_errors]
+      description: Get post by id
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ./examples/post.json
+
+/comments:
+  description: list of comments for all posts
+  get:
+    is: [secured, get_errors]
+    description: get info about all comments
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/comments.json
+
+  /{id}:
+    uriParameters: 
+        id: 
+          description: An unique id number of post.
+          example: "1"
+    get:
+      is: [secured, get_errors]
+      description: get commnet by id
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ./examples/comment.json
+
+/accounts:
+  description: personal account in the system
+  get:
+    is: [secured, get_errors]
+    description: get info about current user
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/user.json
+  put:
+    is: [secured, put_post_errors]
+    description: update data about current user
+    body: 
+      application/json: 
+        example:
+         {
+           "login": "user",
+           "password": "user"
+          }
+        schema: !include ./schemas/registration.json  
+    headers:
+      Authorization: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/user.json
+  /posts:
+    displayName: posts of current user
+    get:
+      is: [secured, get_errors]
+      description: getting list of users posts
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ./examples/accounts_posts.json
+    post:
+      is: [secured, put_post_errors]
+      description: create or update post
+      body: 
+        application/json: 
+          example:
+            {
+              "title": "F2 Framework",
+              "body": "F2 F2",
+              "userId": 4,
+              "categoriesId": [2]
+            }
+          schema: !include ./schemas/post.json  
+      headers:
+        Authorization: string
+      responses:
+        201:
+          body:
+            application/json:
+              example:
+                {
+                  "Created or Updated"
+                }
+
+    /{id}:
+      uriParameters: 
+        id: 
+          description: An unique id number of post.
+          example: "1"
+      get:
+        is: [secured, get_errors]
+        description: get users post by id
+        headers:
+          Authorization: string
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ./examples/post.json
+      delete:
+        is: [secured, delete_errors]
+        description: delete user post by id
+        headers:
+          Authorization: string
+        responses:
+          200:
+            body:
+              application/json:
+                example:
+                  {
+                    1
+                  }
+  /comments:
+    description: comments of current user
+    get:
+      is: [secured, get_errors]
+      description: getting list of users comments
+      headers:
+        Authorization: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include ./examples/accounts_comments.json
+    post:
+      is: [secured, put_post_errors]
+      description: create or update comment
+      body: 
+        application/json: 
+          example:
+            {
+              "text": "test comment",
+              "postId": 1
+            }
+          schema: !include ./schemas/comment.json  
+      headers:
+        Authorization: string
+      responses:
+        201:
+          body:
+            application/json:
+              example:
+                {
+                  "Created or Updated"
+                }
+    /{id}:
+      uriParameters: 
+        id: 
+          description: An unique id number of comment.
+          example: "1"
+      get:
+        is: [secured, get_errors]
+        description: get comment by id
+        headers:
+          Authorization: string
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include ./examples/comment.json     
+      delete:
+          is: [secured, delete_errors]
+          description: delete user post
+          headers:
+            Authorization: string
+          responses:
+            200:
+              body:
+                application/json:
+                  example:
+                        {
+                          1
+                        }

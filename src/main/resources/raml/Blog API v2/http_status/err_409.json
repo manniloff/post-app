@@ -1,0 +1,9 @@
+{
+    "status": "409",
+    "code": "CONFLICT",
+    "type": "Can't create",
+    "time": "2019-05-28T10:56:47+0000",
+    "message": "Object exists, please check the API documentation",
+    "description": "The http method is not allowed for the resource.",
+    "reference_id": "9d4a8404-2afc-49df-942c-8kfa0a236f42"
+}

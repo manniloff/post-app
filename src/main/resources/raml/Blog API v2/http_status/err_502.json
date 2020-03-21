@@ -1,0 +1,8 @@
+{
+  "status": "502",
+  "code": "BAD_GATEWAY",
+  "type": "Upstream Service Error",
+  "time": "2019-05-26T17:33:57+0100",
+  "message": "Upstream service unable to fulfil request.",
+  "reference_id": "85883fa7-d483-403b-a3a5-12041560fc7e"
+}

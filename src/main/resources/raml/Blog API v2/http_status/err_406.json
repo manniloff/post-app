@@ -1,0 +1,9 @@
+{
+    "status": "406",
+    "code": "NOT_ACCEPTABLE",
+    "type": "Contract Violation",
+    "time": "2019-05-28T10:58:41+0000",
+    "message": "API contract violation, please check the API documentation",
+    "description": "The expected media type for method and resource  is application/xml.",
+    "reference_id": "d441a04c-0bd6-468f-bce2-2b84c4621e3d"
+}

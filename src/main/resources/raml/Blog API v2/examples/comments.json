@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "text": "Politics Comment",
+        "postedDate": "2020-03-20T15:47:13.000+0000",
+        "postId": 1,
+        "userName": "user"
+    },
+    {
+        "id": 2,
+        "text": "IT Post",
+        "postedDate": "2020-03-20T15:47:13.000+0000",
+        "postId": 2,
+        "userName": "admin"
+    },
+    {
+        "id": 3,
+        "text": "Business Post",
+        "postedDate": "2020-03-20T15:47:13.000+0000",
+        "postId": 3,
+        "userName": "user"
+    }
+]

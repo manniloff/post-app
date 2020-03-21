@@ -1,0 +1,9 @@
+{
+    "status": "401",
+    "code": "UNAUTHORIZED",
+    "type": "Authorization Error",
+    "time": "2019-05-26T11:56:15+0000",
+    "message": "Generic Message",
+    "description": "Detailed Message",
+    "reference_id": "je37194e-f830-6a3a-8168-3a4c9af6c011"
+}

@@ -1,0 +1,20 @@
+[
+    {
+        "login": "admin",
+        "password": "admin",
+        "role": "ADMIN",
+        "active": true
+    },
+    {
+        "login": "user",
+        "password": "user",
+        "role": "USER",
+        "active": true
+    },
+    {
+        "login": "test1",
+        "password": "test123",
+        "role": "USER",
+        "active": true
+    }
+]
