@@ -82,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<Comment> deleteById(int id) {
+    public int deleteById(int id) {
         Optional<Comment> comment;
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             comment = commentRepository.findById(id);
@@ -94,6 +94,6 @@ public class CommentServiceImpl implements CommentService {
             LOGGER.info("Deleting Comment with id - {}", id);
             commentRepository.deleteById(id);
         }
-        return comment;
+        return comment.get().getId();
     }
 }

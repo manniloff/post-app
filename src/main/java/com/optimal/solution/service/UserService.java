@@ -13,7 +13,7 @@ public interface UserService {
 
     int create(User newUser);
 
-    int update(User newUser, int id);
+    Optional<User> update(User newUser, int id);
 
     void deleteById(int id);
 }

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -58,8 +60,9 @@ public class UserController {
     ResponseEntity<?> update(@RequestBody User newUser,@PathVariable int id) {
         try {
             LOGGER.info("Creating or updating a user");
-            if(userService.update(newUser,id) !=0){
-                return ResponseEntity.ok(userService.update(newUser,id));
+            Optional<User> result = userService.update(newUser,id);
+            if(result.isPresent()){
+                return ResponseEntity.ok(result);
             }
             return new ResponseEntity<>("Not Modified", HttpStatus.NOT_MODIFIED);
         } catch (Exception e) {

@@ -68,8 +68,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public int createOrUpdate(PostDto newPost) {
-        return postRepository.findByIdAndUser(newPost.getId(), JwtRequestFilter.id)
+    public void createOrUpdate(PostDto newPost) {
+        postRepository.findByIdAndUser(newPost.getId(), JwtRequestFilter.id)
                 .map(post -> {
                     LOGGER.info("Updating Post with Id - {} and Title - {}", post.getId(), post.getTitle());
 
@@ -84,25 +84,25 @@ public class PostServiceImpl implements PostService {
 
                     return postRepository.save(post).getId();
                 }).orElseGet(() -> {
-                    LOGGER.info("Creating Post with title {}", newPost.getTitle());
+            LOGGER.info("Creating Post with title {}", newPost.getTitle());
 
-                    Post post = new Post();
+            Post post = new Post();
 
-                    post.setTitle(newPost.getTitle());
-                    post.setBody(newPost.getBody());
-                    post.setCategories(newPost.getCategoriesId()
-                            .stream()
-                            .map(Category::new)
-                            .collect(Collectors.toSet()));
-                    post.setCreateDate(new Date());
-                    post.setUser(new User(newPost.getUserId()));
+            post.setTitle(newPost.getTitle());
+            post.setBody(newPost.getBody());
+            post.setCategories(newPost.getCategoriesId()
+                    .stream()
+                    .map(Category::new)
+                    .collect(Collectors.toSet()));
+            post.setCreateDate(new Date());
+            post.setUser(new User(newPost.getUserId()));
 
-                    return postRepository.save(post).getId();
-                });
+            return postRepository.save(post).getId();
+        });
     }
 
     @Override
-    public Optional<Post> deleteById(int id) {
+    public int deleteById(int id) {
         Optional<Post> post;
         if (JwtRequestFilter.role.equals(Roles.ADMIN)) {
             LOGGER.info("Getting Post by Id - {} from db", id);
@@ -116,7 +116,7 @@ public class PostServiceImpl implements PostService {
             LOGGER.info("Deleting Post by Id - {} from db", id);
             postRepository.deleteByIds(id);
         }
-        return post;
+        return post.get().getId();
     }
 
     private List<PostsDto> getDataPosts(List<Post> posts) {

@@ -38,12 +38,12 @@ public class AccountController {
         }
     }
 
-    @PostMapping(value = {"", "/"}, produces = "application/json")
+    @PutMapping(value = {"", "/"}, produces = "application/json")
     ResponseEntity<?> createOrUpdateUser(@RequestBody User newUser) {
         try {
             LOGGER.info("Creating or updating a user");
             userService.update(newUser, newUser.getId());
-            return new ResponseEntity<>("Created", HttpStatus.CREATED);
+            return new ResponseEntity<>("Created or Updated", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating an user!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -78,7 +78,7 @@ public class AccountController {
         try {
             LOGGER.info("Creating or updating a post");
             postService.createOrUpdate(newPost);
-            return new ResponseEntity<>("Created", HttpStatus.CREATED);
+            return new ResponseEntity<>("Created or Updated", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating a post!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -128,7 +128,7 @@ public class AccountController {
         try {
             LOGGER.info("Creating or updating a comment");
             commentService.createOrUpdate(newComment);
-            return new ResponseEntity<>("Created", HttpStatus.CREATED);
+            return new ResponseEntity<>("Created or Updated", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Error with creating or updating a comment!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

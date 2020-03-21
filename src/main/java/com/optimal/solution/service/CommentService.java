@@ -13,7 +13,7 @@ public interface CommentService {
 
     void createOrUpdate(CommentDto newComment);
 
-    Optional<Comment> deleteById(int id);
+    int deleteById(int id);
 
     List<CommentDto> findAccountAll();
 

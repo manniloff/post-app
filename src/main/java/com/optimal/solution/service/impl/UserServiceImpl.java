@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int update(User newUser, int id) {
+    public Optional<User> update(User newUser, int id) {
         if (userRepository.findById(id).isPresent()) {
             return userRepository.findByLogin(newUser.getLogin())
                     .map(user -> {
@@ -64,12 +64,11 @@ public class UserServiceImpl implements UserService {
                         if (JwtRequestFilter.role.equals("ADMIN")) {
                             user.setRoles(newUser.getRoles() == null ? Roles.USER : newUser.getRoles());
                         }
-
-                        return userRepository.save(user).getId();
-                    }).get();
+                        userRepository.save(user);
+                        return newUser;
+                    });
         }
-
-        return 0;
+        return Optional.empty();
     }
 
     @Override

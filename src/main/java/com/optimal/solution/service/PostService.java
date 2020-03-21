@@ -14,9 +14,9 @@ public interface PostService {
 
     PostsDto findByIdAccount(int id);
 
-    int createOrUpdate(PostDto newPost);
+    void createOrUpdate(PostDto newPost);
 
-    Optional<Post> deleteById(int id);
+    int deleteById(int id);
 
     List<PostsDto> findAccountAll();
 }
