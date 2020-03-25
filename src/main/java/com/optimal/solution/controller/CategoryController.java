@@ -44,7 +44,7 @@ public class CategoryController {
         try {
             LOGGER.info("Creating or updating a category");
             categoryService.createOrUpdate(newCategory);
-            return new ResponseEntity<>("Created", HttpStatus.CREATED);
+            return new ResponseEntity<>("Created or Updated", HttpStatus.CREATED);
         } catch (Exception e) {
             LOGGER.error("Exception on creating or updating a category: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);
@@ -55,7 +55,8 @@ public class CategoryController {
     ResponseEntity<?> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting category by id");
-            return ResponseEntity.ok(categoryService.deleteById(id));
+            categoryService.deleteById(id);
+            return ResponseEntity.ok("Deleted category with id - " + id);
         } catch (Exception e) {
             LOGGER.error("Exception on deleting category by id: ", e);
             return new ResponseEntity<>(ResponseJsonDto.buildNoContent(), HttpStatus.NO_CONTENT);

@@ -3,7 +3,6 @@ package com.optimal.solution.controller;
 import com.optimal.solution.auth.filter.JwtRequestFilter;
 import com.optimal.solution.dto.CommentDto;
 import com.optimal.solution.dto.PostDto;
-import com.optimal.solution.dto.PostsDto;
 import com.optimal.solution.model.User;
 import com.optimal.solution.service.CommentService;
 import com.optimal.solution.service.PostService;
@@ -64,9 +63,8 @@ public class AccountController {
     @GetMapping(value = "/posts/{id}", produces = "application/json")
     ResponseEntity<?> findByIdPost(@PathVariable int id) {
         try {
-            PostsDto post = postService.findByIdAccount(id);
             LOGGER.info("Getting list of post for user - {} ", JwtRequestFilter.id);
-            return ResponseEntity.ok(post);
+            return ResponseEntity.ok(postService.findByIdAccount(id));
         } catch (Exception e) {
             LOGGER.error("Error with getting user by id!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -138,12 +136,8 @@ public class AccountController {
     @DeleteMapping(value = {"/comments/{id}"}, produces = "application/json")
     ResponseEntity<?> deleteByIdComment(@PathVariable int id) {
         try {
-            if (commentService.findById(id).isPresent()) {
-                LOGGER.info("Deleting comment by id");
-                return ResponseEntity.ok(commentService.deleteById(id));
-            } else {
-                return ResponseEntity.ok("No comment found with id " + id);
-            }
+            LOGGER.info("Deleting comment by id");
+            return ResponseEntity.ok(commentService.deleteById(id));
         } catch (Exception e) {
             LOGGER.error("Error with deleting comment by id!", e);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

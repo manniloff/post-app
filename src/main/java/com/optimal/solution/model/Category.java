@@ -29,4 +29,9 @@ public class Category {
     @JsonIgnoreProperties("categories")
     @JsonIgnore
     private Set<Post> posts = new HashSet<>();
+
+    public Category(@NonNull int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

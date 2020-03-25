@@ -41,4 +41,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnore
     private Set<Comment> comments;
+
+    public User(String login, String password, boolean active, Roles roles) {
+        this.login = login;
+        this.password = password;
+        this.active = active;
+        this.roles = roles;
+    }
+
+    
 }

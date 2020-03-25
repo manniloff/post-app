@@ -8,11 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@RestController
+@   Controller
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -75,6 +76,7 @@ public class UserController {
     ResponseEntity<?> deleteById(@PathVariable int id) {
         try {
             LOGGER.info("Deleting user by id");
+            userService.deleteById(id);
             return ResponseEntity.ok("Deleted user with id - " + id);
         } catch (Exception e) {
             LOGGER.error("Exception on deleting user by id: ", e);

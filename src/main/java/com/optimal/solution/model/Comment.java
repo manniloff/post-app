@@ -1,9 +1,7 @@
 package com.optimal.solution.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -14,10 +12,13 @@ import java.util.Date;
 @Data
 @ToString(exclude = {"post","user"})
 @EqualsAndHashCode(exclude = {"post","user"})
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private int id;
 
     @Column(name = "text")
