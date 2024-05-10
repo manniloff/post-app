@@ -1,0 +1,58 @@
+version: 2.1
+
+orbs:
+    azure-acr: circleci/azure-acr@0.2.0
+    docker: circleci/docker@2.1.2
+    azure-aks: circleci/azure-aks@0.3.0
+    azure-cli: circleci/azure-cli@1.2.2
+    helm: circleci/helm@2.0.0
+
+executors:
+  posts-executor:
+    environment:
+      CONTAINER_IMAGE_NAME: posts/posts
+    docker:
+      - image: cimg/openjdk:8.0
+
+jobs:
+    build:
+        executor: posts-executor
+        steps:
+        - checkout
+        - restore_cache:
+            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
+        - run:
+            name: Build
+            command: ./gradlew -Pmaven.settings.location=.circleci/circleci.maven-settings.xml build changeVersionForArtifactAndImage -x test
+        - save_cache:
+            paths:
+                - ~/.gradle/caches/
+            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
+        - attach_workspace:
+            at: ./workspace
+        - persist_to_workspace:
+            root: ./
+            paths:
+                - ./build/libs
+                - ./version
+                - ./chart
+        - store_artifacts:
+            path: ./build/libs/
+
+    test:
+        executor: posts-executor
+        steps:
+        - checkout
+        - restore_cache:
+            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
+        - run:
+            name: Test
+            command: ./gradlew -Pmaven.settings.location=.circleci/circleci.maven-settings.xml test
+        - save_cache:
+            paths:
+                - ~/.gradle/caches/
+            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
+        - store_artifacts:
+            path: build/reports/tests/test
+        - store_test_results:
+            path: build/reports/tests/test
