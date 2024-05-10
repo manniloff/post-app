@@ -15,44 +15,24 @@ executors:
       - image: cimg/openjdk:8.0
 
 jobs:
-    build:
-        executor: posts-executor
-        steps:
-        - checkout
-        - restore_cache:
-            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
-        - run:
-            name: Build
-            command: ./gradlew -Pmaven.settings.location=.circleci/circleci.maven-settings.xml build changeVersionForArtifactAndImage -x test
-        - save_cache:
-            paths:
-                - ~/.gradle/caches/
-            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
-        - attach_workspace:
-            at: ./workspace
-        - persist_to_workspace:
-            root: ./
-            paths:
-                - ./build/libs
-                - ./version
-                - ./chart
-        - store_artifacts:
-            path: ./build/libs/
+  build:
+    docker:
+      - image: maven:3.8.1-jdk-11
 
-    test:
-        executor: posts-executor
-        steps:
-        - checkout
-        - restore_cache:
-            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
-        - run:
-            name: Test
-            command: ./gradlew -Pmaven.settings.location=.circleci/circleci.maven-settings.xml test
-        - save_cache:
-            paths:
-                - ~/.gradle/caches/
-            key: jars-{{ checksum "pom.xml" }}-{{ checksum "pom.xml" }}
-        - store_artifacts:
-            path: build/reports/tests/test
-        - store_test_results:
-            path: build/reports/tests/test
+    steps:
+      - checkout
+
+      # Set up MySQL service
+      - run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql:latest
+
+      # Wait for MySQL to start
+      - run: sleep 30
+
+      # Build and test the project
+      - run: mvn clean install
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
