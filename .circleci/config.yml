@@ -16,15 +16,24 @@ executors:
 
 jobs:
   build:
+
+    working_directory: ~/project
+
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
 
     steps:
       - checkout
+      - restore_cache:
+          key: jars-{{ checksum "pom.xml" }}
 
-      # Set up MySQL service
-      - run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql:latest
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: jars-{{ checksum "pom.xml" }}
 
       # Wait for MySQL to start
       - run: sleep 30
