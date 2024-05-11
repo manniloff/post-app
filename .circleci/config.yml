@@ -70,24 +70,24 @@ jobs:
       - store_test_results:
           path: build/reports/tests/test
 
-    # Enable SSH access for debugging
-    debug:
-      docker:
-        - image: circleci/openjdk:11-jdk
+  # Enable SSH access for debugging
+  debug:
+    docker:
+      - image: circleci/openjdk:11-jdk
 
-      steps:
-        - checkout
-        - run:
-            name: Enable SSH access
-            command: echo 'PermitRootLogin yes' | sudo tee -a /etc/ssh/sshd_config && sudo service ssh restart
-        - persist_to_workspace:
-            root: .
-            paths:
-              - .
-        - run:
-            name: Wait for SSH access
-            command: sleep 1200
-            background: true
+    steps:
+      - checkout
+      - run:
+          name: Enable SSH access
+          command: echo 'PermitRootLogin yes' | sudo tee -a /etc/ssh/sshd_config && sudo service ssh restart
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+      - run:
+          name: Wait for SSH access
+          command: sleep 1200
+          background: true
 
 workflows:
   version: 2
