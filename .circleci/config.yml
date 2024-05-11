@@ -35,8 +35,11 @@ jobs:
             - ~/.m2
           key: jars-{{ checksum "pom.xml" }}
 
-      # Wait for MySQL to start
-      - run: sleep 30
+      - run:
+          name: Run tests
+          command: mvn test
+      - store_test_results:
+            path: build/test-results
 
       # Build and test the project
       - run: mvn clean install
