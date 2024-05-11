@@ -40,37 +40,13 @@ jobs:
           name: Build
           command: mvn clean install
 
-      - run:
-          name: Print current directory
-          command: pwd
-
-      - run:
-          name: Find target folder
-          command: find . -type d -name "target"
-
-      - run:
-          name: Enter in src folder
-          command: cd src
-
-      - run:
-          name: Enter src folder
-          command: ls -d */
-
-      - run:
-          name: Enter in workspace folder
-          command: cd ..
-
-      - run:
-          name: List workspace folders
-          command: ls -d */
-
       - persist_to_workspace:
           root: ./
           paths:
-            - ./target
+            - ./target/build
 
       - store_artifacts:
-          path: ./target
+          path: ./target/build
   test:
     docker:
       - image: maven:3.8.1-jdk-11

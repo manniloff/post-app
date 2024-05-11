@@ -113,11 +113,39 @@
 
     <build>
         <plugins>
+            <!-- Configure maven-resources-plugin to create custom folder -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>create-custom-folder</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/build</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <!-- Define the source directory or file -->
+                                    <directory>${project.basedir}/src/main/resources</directory>
+                                    <!-- Include or exclude specific files if needed -->
+                                    <includes>
+                                        <include>**/*.txt</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>docker-post-app</finalName>
+                    <finalName>build/docker-post-app</finalName>
                 </configuration>
             </plugin>
         </plugins>
