@@ -35,6 +35,11 @@ jobs:
       - attach_workspace:
           at: ./workspace
 
+      # Build and test the project
+      - run:
+          name: Build
+          command: mvn clean install
+
       - run:
           name: Print current directory
           command: pwd
@@ -66,11 +71,6 @@ jobs:
 
       - store_artifacts:
           path: ./target
-
-      # Build and test the project
-      - run:
-          name: Build
-          command: mvn clean install
   test:
     docker:
       - image: maven:3.8.1-jdk-11
