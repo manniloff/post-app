@@ -40,7 +40,19 @@ jobs:
           command: pwd
 
       - run:
-          name: List folders
+          name: Enter in src folder
+          command: cd src
+
+      - run:
+          name: List src folders
+          command: ls -d */
+
+      - run:
+          name: Enter in workspace folder
+          command: cd ../workspace
+
+      - run:
+          name: List workspace folders
           command: ls -d */
 
       - persist_to_workspace:
