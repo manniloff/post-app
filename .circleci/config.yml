@@ -39,8 +39,12 @@ jobs:
           name: Print current directory
           command: pwd
 
+      - run:
+          name: List folders
+          command: ls -d */
+
       - persist_to_workspace:
-          root: ../
+          root: ./
           paths:
             - ./target
 
