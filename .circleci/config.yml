@@ -40,16 +40,20 @@ jobs:
           command: pwd
 
       - run:
+          name: Find target folder
+          command: find . -type d -name "target"
+
+      - run:
           name: Enter in src folder
           command: cd src
 
       - run:
-          name: List src folders
+          name: Enter src folder
           command: ls -d */
 
       - run:
           name: Enter in workspace folder
-          command: cd ../workspace
+          command: cd ..
 
       - run:
           name: List workspace folders
