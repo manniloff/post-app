@@ -35,6 +35,19 @@ jobs:
             - ~/.m2
           key: jars-{{ checksum "pom.xml" }}
 
+      - attach_workspace:
+          at: ~/project
+
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .build/libs
+            - ./version
+            - ./chart
+
+      - store_artifacts:
+          path: ./build/libs/
+
       - run:
           name: Run tests
           command: mvn test
@@ -42,7 +55,9 @@ jobs:
             path: build/test-results
 
       # Build and test the project
-      - run: mvn clean install
+      - run:
+          name: Build
+          command: mvn clean install
 
 workflows:
   version: 2
