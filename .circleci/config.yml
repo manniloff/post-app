@@ -63,10 +63,19 @@ jobs:
           paths:
             - ~/.m2
           key: jars-{{ checksum "pom.xml" }}
+
+      - run:
+          name: Move to target
+          command: cd target
+
+      - run:
+          name: List files
+          command: ls -d */
+
       - store_artifacts:
           path: target/surefire-reports
       - store_test_results:
-          path: target/Surefire-reports
+          path: target/surefire-reports
 
 workflows:
   version: 2
