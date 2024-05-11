@@ -53,7 +53,10 @@ jobs:
           name: Build
           command: mvn clean install
   test:
-    executor: ob-executor
+    docker:
+      - image: maven:3.8.1-jdk-11
+      - image: circleci/mysql
+
     steps:
       - checkout
       - restore_cache:
