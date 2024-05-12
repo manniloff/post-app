@@ -79,7 +79,7 @@ jobs:
 
       - run:
           name: Deploy
-          command: scp build/libs/your-app.war user@your-server-ip:/path/to/tomcat/webapps
+          command: scp /target/build/docker-post-app.war root@195.26.255.172:/var/lib/tomcat9/webapps
 
 workflows:
   version: 2
