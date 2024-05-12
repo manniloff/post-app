@@ -84,7 +84,7 @@ jobs:
       - run:
           name: Add Host Key to known_hosts
           command: |
-            echo "195.26.255.172 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE0z6IbZGhRmiySG0Ih22t7rZZcgQK1iR6OTK8rd5cWE3mFEC5JcE2RVwI7q/xymBEyIz9ON/Bly/Sb0KHzZ3dI=" >> ~/.ssh/known_hosts
+            echo "195.26.255.172 ecdsa-sha2-nistp256 0G0r8WAYu74ni66ApyroDhnIw55outbvD0VQ6TxFEDU=" >> ~/.ssh/known_hosts
 
       - run:
           name: Deploy
