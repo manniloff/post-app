@@ -87,6 +87,11 @@ jobs:
             echo "195.26.255.172 ecdsa-sha2-nistp256 0G0r8WAYu74ni66ApyroDhnIw55outbvD0VQ6TxFEDU=" >> ~/.ssh/known_hosts
 
       - run:
+          name: Add Host Key to known_hosts 2
+          command: |
+            ssh-keyscan -T 5 -H 195.26.255.172 >> ~/.ssh/known_hosts
+
+      - run:
           name: Deploy
           command: |
             ssh root@195.26.255.172 "mkdir -p /var/lib/tomcat9/webapps"
