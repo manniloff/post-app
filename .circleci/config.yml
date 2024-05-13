@@ -92,7 +92,7 @@ jobs:
           command: |
             scp -i ~/.ssh/id_rsa -r /target/build/* $SSH_HOST:/var/lib/tomcat9/webapps
           environment:
-            SSH_HOST: $SSH_HOST
+            SSH_HOST: $SSH_HOST2
             SSH_KEY: $SSH_KEY
 
       - run:
