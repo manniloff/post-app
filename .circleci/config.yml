@@ -82,14 +82,15 @@ jobs:
             mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
 
       - run:
-          name: Add Host Key to known_hosts
+          name: Add SSH Key to known_hosts
           command: |
-            echo "195.26.255.172 ecdsa-sha2-nistp256 0G0r8WAYu74ni66ApyroDhnIw55outbvD0VQ6TxFEDU=" >> ~/.ssh/known_hosts
+            echo `${SSH_PRIVATE_KEY}` | base64 --decode >> ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
 
       - run:
-          name: Add Host Key to known_hosts 2
+          name: Add Host Key to known_hosts
           command: |
-            ssh-keyscan -T 5 -H 195.26.255.172 >> ~/.ssh/known_hosts
+            ssh -o "StrictHostKeyChecking no" root@195.26.255.172
 
       - run:
           name: Deploy
