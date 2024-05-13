@@ -90,7 +90,6 @@ jobs:
       - run:
           name: Deploy
           command: |
-            ssh root@195.26.255.172 "mkdir -p /var/lib/tomcat9/webapps"
             scp /target/build/docker-post-app.war root@195.26.255.172:/var/lib/tomcat9/webapps
 
 workflows:
