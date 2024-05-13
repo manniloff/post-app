@@ -83,17 +83,14 @@ jobs:
       - run:
           name: Add SSH Key to known_hosts
           command: |
-            echo `${SSH_PRIVATE_KEY}` | base64 --decode >> ~/.ssh/id_rsa
+            echo $SSH_PRIVATE_KEY | base64 --decode >> ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             
 
       - run:
           name: Copy build artifacts to server
           command: |
-            scp -i ~/.ssh/id_rsa -r /target/build/* $SSH_HOST2:/var/lib/tomcat9/webapps
-          environment:
-            SSH_HOST: $SSH_HOST2
-            SSH_KEY: $SSH_KEY
+            scp -i ~/.ssh/id_rsa -r /target/build/* $SSH_USER@$SSH_HOST:/var/lib/tomcat9/webapps
 
       - run:
           name: Deploy
