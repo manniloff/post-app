@@ -88,11 +88,6 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
 
       - run:
-          name: Add Host Key to known_hosts
-          command: |
-            ssh -o "StrictHostKeyChecking no" root@195.26.255.172
-
-      - run:
           name: Deploy
           command: |
             ssh root@195.26.255.172 "mkdir -p /var/lib/tomcat9/webapps"
