@@ -83,7 +83,7 @@ jobs:
       - run:
           name: Copy build artifacts to server
           command: |
-            scp -i ~/.ssh/id_rsa -r /target/build/* $SSH_USER@$SSH_HOST:/var/lib/tomcat9/webapps
+            scp -r /target/build/* $SSH_USER@$SSH_HOST:/var/lib/tomcat9/webapps
 
       - run:
           name: Deploy
