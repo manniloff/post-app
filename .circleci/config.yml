@@ -81,29 +81,13 @@ jobs:
             mkdir -p ~/.ssh && touch ~/.ssh/known_hosts            
 
       - run:
-          name: "echo an SSH_KEY"
-          command: |
-            echo $SSH_PRIVATE_KEY
-
-      - run:
-          name: "echo an SSH_USER"
-          command: |
-            echo $SSH_USER
-
-      - run:
-          name: "echo an $SSH_HOST"
-          command: |
-            echo $SSH_HOST
-
-      - run:
-            name: "echo an SSH_USER@$SSH_HOST"
-            command: |
-                echo $SSH_USER@$SSH_HOST
+          name: List folders
+          command: ls -d */
 
       - run:
           name: Copy build artifacts to server
           command: |
-            scp -r /target/build/* $SSH_USER@$SSH_HOST:/var/lib/tomcat9/webapps
+            scp -r /target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/var/lib/tomcat9/webapps/ROOT.war
 
       - run:
           name: Deploy
