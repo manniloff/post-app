@@ -71,8 +71,7 @@ jobs:
 
   deploy:
     docker:
-      - image: maven:3.8.1-jdk-11
-      - image: circleci/mysql
+      - image: cimg/base:stable
 
     steps:
       - checkout
@@ -89,12 +88,12 @@ jobs:
             
 
       - run:
-          name: Connect to the server
-          command: ssh root@195.26.55.172
-
-      - run:
-          name: Check connection
-          command: cat .ssh/authorized_keys
+          name: Copy build artifacts to server
+          command: |
+            scp -i ~/.ssh/id_rsa -r /target/build/* $SSH_HOST:/var/lib/tomcat9/webapps
+          environment:
+            SSH_HOST: $SSH_HOST
+            SSH_KEY: $SSH_KEY
 
       - run:
           name: Deploy
