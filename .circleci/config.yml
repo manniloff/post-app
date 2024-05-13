@@ -78,14 +78,7 @@ jobs:
       - run:
           name: Create SSH directory and known_hosts file
           command: |
-            mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-
-      - run:
-          name: Add SSH Key to known_hosts
-          command: |
-            echo $SSH_PRIVATE_KEY | base64 --decode >> ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            
+            mkdir -p ~/.ssh && touch ~/.ssh/known_hosts            
 
       - run:
           name: Copy build artifacts to server
