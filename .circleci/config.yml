@@ -102,7 +102,7 @@ jobs:
 
       - run:
           name: Copy .war File
-          command: scp -i target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
+          command: scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
 
       - run:
           name: Copy .war to Linux server
