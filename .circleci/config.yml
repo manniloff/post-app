@@ -75,25 +75,19 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Create SSH directory and known_hosts file
-          command: |
-            mkdir -p ~/.ssh && touch ~/.ssh/known_hosts            
-
-      - run:
-          name: Add SSH Key to known_hosts
-          command: |
-            echo $SSH_PRIVATE_KEY | base64 --decode >> ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
 
       - run:
           name: List folders
           command: ls -d */
 
       - run:
-          name: Copy build artifacts to server
+          name: Copy .war to Linux server
           command: |
-            scp -r /target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
+            # Install ssh client
+            sudo apt-get update && sudo apt-get install -y ssh
+
+            # Copy the .war file to the Linux server via SSH
+            scp -i ~/.ssh/id_rsa target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
 
 workflows:
   version: 2
