@@ -88,7 +88,7 @@ jobs:
       - run:
           name: SSH connection
           command: |
-            sshpass -p $SSH_PWRD ssh $SSH_USER@$SSH_HOST ll
+            sshpass -p $SSH_PWRD ssh root@195.26.255.172 ll
 
         # Add SSH server fingerprint to known hosts
      # - run:
