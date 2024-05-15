@@ -85,20 +85,20 @@ jobs:
      # - run:
       #   name: Add SSH Host
       #   command: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-      - run:
-          name: "echo an env var that is part of our project $SSH_PRIVATE_KEY"
-          command: |
-            echo $SSH_PRIVATE_KEY # this env var must be set within the project
+          #- run:
+          #name: "echo an env var that is part of our project $SSH_PRIVATE_KEY"
+            #command: |
+          #echo $SSH_PRIVATE_KEY # this env var must be set within the project
 
-      - run:
-          name: "echo an env var that is part of our project $SSH_USER"
-          command: |
-            echo $SSH_USER # this env var must be set within the project
+          #      - run:
+          #name: "echo an env var that is part of our project $SSH_USER"
+            #command: |
+          #echo $SSH_USER # this env var must be set within the project
 
-      - run:
-          name: "echo an env var that is part of our project $SSH_HOST"
-          command: |
-            echo $SSH_HOST # this env var must be set within the project
+          #- run:
+          #name: "echo an env var that is part of our project $SSH_HOST"
+            #command: |
+          #echo $SSH_HOST # this env var must be set within the project
 
       - run:
           name: Copy .war File
