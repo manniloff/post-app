@@ -88,7 +88,9 @@ jobs:
       - run:
           name: SSH connection
           command: |
-            sshpass -p $SSH_PWRD ssh root@195.26.255.172 ll
+            sshpass -p $SSH_PWRD ssh root@195.26.255.172
+            scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
+            
 
         # Add SSH server fingerprint to known hosts
      # - run:
