@@ -82,9 +82,9 @@ jobs:
           command: sudo apt-get update && sudo apt-get install -y openssh-client
 
         # Add SSH server fingerprint to known hosts
-      - run:
-         name: Add SSH Host
-         command: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+     # - run:
+      #   name: Add SSH Host
+      #   command: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
       - run:
           name: Copy .war File
