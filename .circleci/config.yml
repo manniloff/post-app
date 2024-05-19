@@ -75,22 +75,18 @@ jobs:
 
     steps:
       - checkout
-
-        # Install SSH client
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
       - run:
           name: Install SSH Client
           command: sudo apt-get update && sudo apt-get install -y openssh-client
-
       - run:
-          name: Install sshpass
-          command: sudo apt-get update && sudo apt-get install -y sshpass
-
-      - run:
-          name: SSH connection
+          name: SSH connection and deployment
           command: |
-            sshpass -p $SSH_PWRD ssh root@195.26.255.172
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
             scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
-            
+            EOF            
 
         # Add SSH server fingerprint to known hosts
      # - run:
