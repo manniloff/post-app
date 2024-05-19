@@ -87,46 +87,19 @@ jobs:
           command: sudo apt-get update && sudo apt-get install -y openssh-client
 
       - run:
-          name: Verify build artifact
-          command: ls -l target/build/docker-post-app.war
-
-      - run:
           name: SSH connection and deployment
           command: |
             scp -v -o StrictHostKeyChecking=no target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war           
           no_output_timeout: 20m
 
-        # Add SSH server fingerprint to known hosts
-     # - run:
-      #   name: Add SSH Host
-      #   command: ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-          #- run:
-          #name: "echo an env var that is part of our project $SSH_PRIVATE_KEY"
-            #command: |
-          #echo $SSH_PRIVATE_KEY # this env var must be set within the project
+      - run:
+          name: Restart Tomcat
+          command: |
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
+            sudo systemctl stop tomcat
+            sudo systemctl start tomcat
+            EOF
 
-          #      - run:
-          #name: "echo an env var that is part of our project $SSH_USER"
-            #command: |
-          #echo $SSH_USER # this env var must be set within the project
-
-          #- run:
-          #name: "echo an env var that is part of our project $SSH_HOST"
-            #command: |
-          #echo $SSH_HOST # this env var must be set within the project
-
-      #- run:
-       #   name: Copy .war File
-        #  command: scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
-
-      #- run:
-       #   name: Copy .war to Linux server
-        #  command: |
-         #   # Install ssh client
-          #  sudo apt-get update && sudo apt-get install -y ssh
-
-            # Copy the .war file to the Linux server via SSH
-#            scp -i ~/.ssh/id_rsa target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
 workflows:
   version: 2
   build_test_deploy:
