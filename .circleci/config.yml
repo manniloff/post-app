@@ -95,8 +95,7 @@ jobs:
       - run:
           name: Restart Tomcat
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST ; sudo systemctl stop tomcat ; sudo systemctl start tomcat
-          no_output_timeout: 20m
+            ssh -T -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'sudo systemctl stop tomcat && sudo systemctl start tomcat'
 
       - run:
           name: Verify Tomcat Deployment
