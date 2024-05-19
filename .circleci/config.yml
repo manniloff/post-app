@@ -95,7 +95,7 @@ jobs:
       - run:
           name: Restart Tomcat
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<<< EOF
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<<< 'EOF'
               sudo systemctl stop tomcat
               sudo systemctl start tomcat
             EOF
