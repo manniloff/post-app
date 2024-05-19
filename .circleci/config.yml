@@ -33,7 +33,7 @@ jobs:
           key: jars-{{ checksum "pom.xml" }}
 
       - attach_workspace:
-          at: ./workspace
+          at: .
 
       # Build and test the project
       - run:
@@ -41,9 +41,9 @@ jobs:
           command: mvn clean install
 
       - persist_to_workspace:
-          root: ./
+          root: .
           paths:
-            - ./target/build
+            - target/build
 
       - store_artifacts:
           path: ./target/build
@@ -75,6 +75,10 @@ jobs:
 
     steps:
       - checkout
+
+      - attach_workspace:
+          at: .
+
       - add_ssh_keys:
           fingerprints:
             - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
@@ -89,10 +93,8 @@ jobs:
       - run:
           name: SSH connection and deployment
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
-            EOF
-            scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war           
-            EOF
+            scp -v -o StrictHostKeyChecking=no target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war           
+          no_output_timeout: 20m
 
         # Add SSH server fingerprint to known hosts
      # - run:
