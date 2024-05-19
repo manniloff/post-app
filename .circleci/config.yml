@@ -95,10 +95,16 @@ jobs:
       - run:
           name: Restart Tomcat
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
             sudo systemctl stop tomcat
             sudo systemctl start tomcat
-          no_output_timeout: 20m
+            EOF
+
+      - run:
+          name: Verify Tomcat Deployment
+          command: |
+            sleep 30  # Wait for Tomcat to fully start
+            curl -f http://$SSH_HOST:8080/login || exit 1
 
 workflows:
   version: 2
