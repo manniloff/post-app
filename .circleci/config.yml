@@ -86,7 +86,9 @@ jobs:
           name: SSH connection and deployment
           command: |
             ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
+            EOF
             scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war           
+            EOF
 
         # Add SSH server fingerprint to known hosts
      # - run:
