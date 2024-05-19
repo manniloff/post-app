@@ -81,12 +81,12 @@ jobs:
       - run:
           name: Install SSH Client
           command: sudo apt-get update && sudo apt-get install -y openssh-client
+
       - run:
           name: SSH connection and deployment
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
-            scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
-            EOF            
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
+            scp target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war           
 
         # Add SSH server fingerprint to known hosts
      # - run:
