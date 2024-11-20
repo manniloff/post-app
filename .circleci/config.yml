@@ -1,11 +1,11 @@
 version: 2.1
 
 orbs:
-    azure-acr: circleci/azure-acr@0.2.0
-    docker: circleci/docker@2.1.2
-    azure-aks: circleci/azure-aks@0.3.0
-    azure-cli: circleci/azure-cli@1.2.2
-    helm: circleci/helm@2.0.0
+  azure-acr: circleci/azure-acr@0.2.0
+  docker: circleci/docker@2.1.2
+  azure-aks: circleci/azure-aks@0.3.0
+  azure-cli: circleci/azure-cli@1.2.2
+  helm: circleci/helm@2.0.0
 
 executors:
   posts-executor:
