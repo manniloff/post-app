@@ -81,7 +81,7 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
+            - "SHA256:PVRcqEI5y1MZ23lPSOpB3WxOiiJbIPjKwibhiDKIwFI"
       - run:
           name: Install SSH Client
           command: sudo apt-get update && sudo apt-get install -y openssh-client
