@@ -79,6 +79,10 @@ jobs:
       - attach_workspace:
           at: .
 
+      - run:
+          name: Debug SSH Variables
+          command: echo "SSH_USER=$SSH_USER, SSH_HOST=$SSH_HOST"
+
       - add_ssh_keys:
           fingerprints:
             - "SHA256:PVRcqEI5y1MZ23lPSOpB3WxOiiJbIPjKwibhiDKIwFI"
