@@ -79,10 +79,6 @@ jobs:
       - attach_workspace:
           at: .
 
-      - run:
-          name: Debug SSH Variables
-          command: echo "SSH_USER=$SSH_USER, SSH_HOST=$SSH_HOST"
-
       - add_ssh_keys:
           fingerprints:
             - "SHA256:PVRcqEI5y1MZ23lPSOpB3WxOiiJbIPjKwibhiDKIwFI"
@@ -93,13 +89,13 @@ jobs:
       - run:
           name: SSH connection and deployment
           command: |
-            scp -v -o StrictHostKeyChecking=no target/build/docker-post-app.war $SSH_USER@195.26.255.172:/opt/tomcat/webapps/ROOT.war
+            scp -v -o StrictHostKeyChecking=no target/build/docker-post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
           no_output_timeout: 20m
 
       - run:
           name: Restart Tomcat
           command: |
-            ssh -T -o StrictHostKeyChecking=no $SSH_USER@195.26.255.172 'sudo systemctl stop tomcat && sudo systemctl start tomcat'
+            ssh -T -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'sudo systemctl stop tomcat && sudo systemctl start tomcat'
 
       - run:
           name: Verify Tomcat Deployment
