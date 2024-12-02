@@ -13,6 +13,12 @@ executors:
       CONTAINER_IMAGE_NAME: posts/posts
     docker:
       - image: cimg/openjdk:8.0
+      - image: mysql:8.0
+          environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: posts
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
 
 jobs:
   build:
@@ -91,6 +97,18 @@ jobs:
           command: |
             scp -v -o StrictHostKeyChecking=no target/post-app.war $SSH_USER@$SSH_HOST:/opt/tomcat/webapps/ROOT.war
           no_output_timeout: 20m
+
+      - run:
+          name: Wait for MySQL
+          command: |
+            for i in {1..10}; do
+              if echo 'SELECT 1;' | mysql -h 127.0.0.1 -u user -ppassword myapp_db; then
+                echo "MySQL is ready"
+                break
+              fi
+              echo "Waiting for MySQL..."
+              sleep 5
+            done
 
       - run:
           name: Restart Tomcat
