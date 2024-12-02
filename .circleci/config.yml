@@ -43,10 +43,10 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - target/build
+            - target
 
       - store_artifacts:
-          path: ./target/build
+          path: ./target
   test:
     docker:
       - image: maven:3.8.1-jdk-11
