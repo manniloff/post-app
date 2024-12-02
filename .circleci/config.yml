@@ -101,7 +101,7 @@ jobs:
           name: Verify Tomcat Deployment
           command: |
             sleep 30  # Wait for Tomcat to fully start
-            curl -f http://$SSH_HOST:8888/posts || exit 1
+            curl -f http://$SSH_HOST:8080/post-app/posts || exit 1
           no_output_timeout: 20m
 
 workflows:

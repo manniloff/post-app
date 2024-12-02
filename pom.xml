@@ -110,49 +110,19 @@
             <artifactId>mockito-inline</artifactId>
             <version>2.15.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.3</version>
-            </plugin>
-            <!-- Configure maven-resources-plugin to create custom folder -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <id>create-custom-folder</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/build</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <!-- Define the source directory or file -->
-                                    <directory>${project.basedir}/src/main/resources</directory>
-                                    <!-- Include or exclude specific files if needed -->
-                                    <includes>
-                                        <include>**/*.txt</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <finalName>build/docker-post-app</finalName>
-                </configuration>
             </plugin>
         </plugins>
     </build>
