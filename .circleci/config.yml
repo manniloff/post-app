@@ -102,7 +102,7 @@ jobs:
           name: Wait for MySQL
           command: |
             for i in {1..10}; do
-              if echo 'SELECT 1;' | mysql -h 127.0.0.1 -u user -ppassword myapp_db; then
+              if echo 'SELECT 1;' | mysql -h 127.0.0.1 -u user -ppassword posts; then
                 echo "MySQL is ready"
                 break
               fi
