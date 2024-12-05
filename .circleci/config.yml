@@ -13,6 +13,7 @@ executors:
       CONTAINER_IMAGE_NAME: posts/posts
     docker:
       - image: cimg/openjdk:8.0
+      - image: docker:stable
 
 jobs:
   build:
@@ -20,7 +21,7 @@ jobs:
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
-      - image: docker-stable
+      - image: docker:stable
 
     steps:
       - checkout
