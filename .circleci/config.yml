@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t posts-app:latest .
+            docker build -f docker/Dockerfile -t posts-app:latest .
       - run:
           name: Save Docker Image to TAR
           command: |
