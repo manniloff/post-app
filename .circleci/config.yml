@@ -52,9 +52,7 @@ jobs:
           command: ls -al
       - run:
           name: Build Docker Image
-          command: |
-            cd docker
-            docker build -t posts-app:latest .
+          command: cd docker && docker build -t posts-app:latest .
       - run:
           name: Save Docker Image to TAR
           command: |
