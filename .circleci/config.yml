@@ -20,6 +20,7 @@ jobs:
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
+      - image: docker-stable
 
     steps:
       - checkout
@@ -43,7 +44,11 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build/Dockerfile -t posts-app:latest .
+            docker build -t posts-app:latest .
+      - run:
+          name: Save Docker Image to TAR
+          command: |
+            docker save posts-app:latest > posts-app.tar
       - persist_to_workspace:
           root: .
           paths:
