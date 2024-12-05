@@ -46,7 +46,7 @@ jobs:
           command: mvn clean install
       - run:
           name: List files in the current directory
-          command: ls -al
+          command: cd docker | ls -al
       - run:
           name: Build Docker Image
           command: |
