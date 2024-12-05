@@ -13,7 +13,7 @@ executors:
       CONTAINER_IMAGE_NAME: posts/posts
     docker:
       - image: cimg/openjdk:8.0
-      - image: docker:stable
+      - image: cimg/base:stable
 
 jobs:
   build:
@@ -21,10 +21,11 @@ jobs:
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
-      - image: docker:stable
+      - image: cimg/base:stable
 
     steps:
       - checkout
+      - setup_remote_docker
       - restore_cache:
           key: jars-{{ checksum "pom.xml" }}
 
@@ -101,7 +102,13 @@ jobs:
       - run:
           name: SSH connection and deployment
           command: |
-            scp -v -o StrictHostKeyChecking=no target/posts-app:latest $SSH_USER@$SSH_HOST:/opt/
+            scp -v -o StrictHostKeyChecking=no target/posts-app.war $SSH_USER@$SSH_HOST:/opt/
+          no_output_timeout: 20m
+
+      - run:
+          name: SSH connection and deployment
+          command: |
+            scp -v -o StrictHostKeyChecking=no posts-app.tar $SSH_USER@$SSH_HOST:/opt/
           no_output_timeout: 20m
 
 #      - run:
