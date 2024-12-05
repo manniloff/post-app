@@ -74,9 +74,6 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-  docker-image:
-    executor: docker-executor
-
   deploy:
     executor: docker-executor
     docker:
