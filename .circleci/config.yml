@@ -16,7 +16,7 @@ executors:
 
 jobs:
   build:
-    executor: docker-executor
+    executor: posts-executor
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
@@ -52,7 +52,7 @@ jobs:
       - store_artifacts:
           path: ./target
   test:
-    executor: docker-executor
+    executor: posts-executor
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
@@ -75,7 +75,7 @@ jobs:
           path: target/surefire-reports
 
   deploy:
-    executor: docker-executor
+    executor: posts-executor
     docker:
       - image: cimg/base:stable
 
