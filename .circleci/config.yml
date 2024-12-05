@@ -13,7 +13,7 @@ executors:
       CONTAINER_IMAGE_NAME: posts/posts
     docker:
       - image: cimg/openjdk:8.0
-      - image: cimg/base:stable
+      - image: cimg/base:2022.09
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
     docker:
       - image: maven:3.8.1-jdk-11
       - image: circleci/mysql
-      - image: cimg/base:stable
+      - image: cimg/base:2022.09
 
     steps:
       - checkout
@@ -44,6 +44,9 @@ jobs:
       - run:
           name: Build
           command: mvn clean install
+      - run:
+          name: List files in the current directory
+          command: ls -al
       - run:
           name: Build Docker Image
           command: |
