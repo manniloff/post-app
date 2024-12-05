@@ -46,14 +46,15 @@ jobs:
           command: mvn clean install
       - run:
           name: Open docker folder
-          command: cd docker
+          command: cd docker && ls -la
       - run:
           name: List files in the current directory
           command: ls -al
       - run:
           name: Build Docker Image
           command: |
-            docker build -f docker/Dockerfile -t posts-app:latest .
+            cd docker
+            docker build -t posts-app:latest .
       - run:
           name: Save Docker Image to TAR
           command: |
