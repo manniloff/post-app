@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t posts-app:latest .
+            docker build/Dockerfile -t posts-app:latest .
       - persist_to_workspace:
           root: .
           paths:
