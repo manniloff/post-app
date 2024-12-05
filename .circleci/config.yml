@@ -46,7 +46,7 @@ jobs:
           command: mvn clean install
       - run:
           name: Open docker folder
-          command: cd docker | ls -al
+          command: cd docker
       - run:
           name: List files in the current directory
           command: ls -al
