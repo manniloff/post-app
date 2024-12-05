@@ -1,68 +1,125 @@
 version: 2.1
 
+orbs:
+  azure-acr: circleci/azure-acr@0.2.0
+  docker: circleci/docker@2.1.2
+  azure-aks: circleci/azure-aks@0.3.0
+  azure-cli: circleci/azure-cli@1.2.2
+  helm: circleci/helm@2.0.0
+
 executors:
-  docker-executor:
+  posts-executor:
+    environment:
+      CONTAINER_IMAGE_NAME: posts/posts
     docker:
-      - image: circleci/openjdk:17
+      - image: cimg/openjdk:8.0
 
 jobs:
   build:
     executor: docker-executor
-    steps:
-      - checkout
-      - run: mvn clean install
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: jars-{{ checksum "pom.xml" }}
-      - store_artifacts:
-          path: ./target
-          destination: build-artifacts
+    docker:
+      - image: maven:3.8.1-jdk-11
+      - image: circleci/mysql
 
-  test:
-    executor: docker-executor
     steps:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "pom.xml" }}
-      - run: mvn test
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: jars-{{ checksum "pom.xml" }}
+
+      - attach_workspace:
+          at: .
+
+      # Build and test the project
+      - run:
+          name: Build
+          command: mvn clean install
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t posts-app:latest .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - target
+
+      - store_artifacts:
+          path: ./target
+  test:
+    executor: docker-executor
+    docker:
+      - image: maven:3.8.1-jdk-11
+      - image: circleci/mysql
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "pom.xml" }}
+      - run:
+          name: Test
+          command: mvn test
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: jars-{{ checksum "pom.xml" }}
+
+      - store_artifacts:
+          path: target/surefire-reports
       - store_test_results:
           path: target/surefire-reports
 
+  docker-image:
+    executor: docker-executor
+
   deploy:
     executor: docker-executor
+    docker:
+      - image: cimg/base:stable
+
     steps:
+      - checkout
+
+      - attach_workspace:
+          at: .
+
       - add_ssh_keys:
           fingerprints:
             - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
-      - checkout
-      - attach_workspace:
-          at: .
       - run:
-          name: Copy Docker Compose Files to Remote Server
-          command: |
-            scp -o StrictHostKeyChecking=no docker-compose.yml Dockerfile target/post-app.war $SSH_USER@$SSH_HOST:/home/$SSH_USER/deploy/
+          name: Install SSH Client
+          command: sudo apt-get update && sudo apt-get install -y openssh-client
+
       - run:
-          name: Deploy Application on Remote Server
+          name: SSH connection and deployment
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << EOF
-              cd /home/$SSH_USER/deploy/
-              docker-compose down
-              docker-compose up -d --build
-            EOF
-      - run:
-          name: Verify Deployment
-          command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST curl -f http://localhost:8080/posts || exit 1
+            scp -v -o StrictHostKeyChecking=no target/posts-app:latest $SSH_USER@$SSH_HOST:/opt/
+          no_output_timeout: 20m
+
+#      - run:
+#          name: Restart Tomcat
+#          command: |
+#            ssh -T -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'sudo systemctl stop tomcat && sudo systemctl start tomcat'
+
+#      - run:
+#          name: Verify Tomcat Deployment
+#          command: |
+#            sleep 30  # Wait for Tomcat to fully start
+#            curl -f http://$SSH_HOST:8080/posts || exit 1
+#          no_output_timeout: 20m
 
 workflows:
   version: 2
   build_test_deploy:
     jobs:
       - build
-      - test:
-          requires:
-            - build
+      - test
       - deploy:
           requires:
+            - build
             - test
