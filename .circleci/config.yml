@@ -117,6 +117,7 @@ jobs:
             ssh $SSH_USER@$SSH_HOST "
               cd /opt/docker-version &&
               docker build -t post-app:latest . &&
+              docker-compose down &&
               docker-compose up -d
             "
 
