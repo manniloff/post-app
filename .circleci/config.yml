@@ -105,17 +105,20 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/Dockerfile $SSH_USER@$SSH_HOST:/opt/docker-version/Dockerfile
           no_output_timeout: 20m
 
-#      - run:
-#          name: Restart Tomcat
-#          command: |
-#            ssh -T -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'sudo systemctl stop tomcat && sudo systemctl start tomcat'
+      - run:
+          name: SSH connection and deploy docker-compose
+          command: |
+            scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
+          no_output_timeout: 20m
 
-#      - run:
-#          name: Verify Tomcat Deployment
-#          command: |
-#            sleep 30  # Wait for Tomcat to fully start
-#            curl -f http://$SSH_HOST:8080/posts || exit 1
-#          no_output_timeout: 20m
+      - run:
+          name: Build and Run Docker on Server
+          command: |
+            ssh $SSH_USER@$SSH_HOST "
+              cd /opt/docker-version &&
+              docker build -t post-app:latest . &&
+              docker-compose up -d
+            "
 
 workflows:
   version: 2
