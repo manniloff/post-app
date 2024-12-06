@@ -44,19 +44,7 @@ jobs:
       - run:
           name: Build
           command: mvn clean install
-      - run:
-          name: Open docker folder
-          command: cd docker && ls -la
-      - run:
-          name: List files in the current directory
-          command: ls -al
-      - run:
-          name: Build Docker Image
-          command: cd docker && docker build -t posts-app:latest .
-      - run:
-          name: Save Docker Image to TAR
-          command: |
-            docker save posts-app:latest > posts-app.tar
+
       - persist_to_workspace:
           root: .
           paths:
@@ -106,15 +94,15 @@ jobs:
           command: sudo apt-get update && sudo apt-get install -y openssh-client
 
       - run:
-          name: SSH connection and deployment
+          name: SSH connection and deploy .war file
           command: |
-            scp -v -o StrictHostKeyChecking=no target/posts-app.war $SSH_USER@$SSH_HOST:/opt/
+            scp -v -o StrictHostKeyChecking=no target/posts-app.war $SSH_USER@$SSH_HOST:/opt/docker-version/
           no_output_timeout: 20m
 
       - run:
-          name: SSH connection and deployment
+          name: SSH connection and deploy Dockerfile
           command: |
-            scp -v -o StrictHostKeyChecking=no posts-app.tar $SSH_USER@$SSH_HOST:/opt/
+            scp -v -o StrictHostKeyChecking=no docker/Dockerfile $SSH_USER@$SSH_HOST:/opt/docker-version/
           no_output_timeout: 20m
 
 #      - run:
