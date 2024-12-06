@@ -96,13 +96,13 @@ jobs:
       - run:
           name: SSH connection and deploy .war file
           command: |
-            scp -v -o StrictHostKeyChecking=no target/post-app.war $SSH_USER@$SSH_HOST:/opt/docker-version/
+            scp -v -o StrictHostKeyChecking=no target/post-app.war $SSH_USER@$SSH_HOST:/opt/docker-version/post-app.war
           no_output_timeout: 20m
 
       - run:
           name: SSH connection and deploy Dockerfile
           command: |
-            scp -v -o StrictHostKeyChecking=no docker/Dockerfile $SSH_USER@$SSH_HOST:/opt/docker-version/
+            scp -v -o StrictHostKeyChecking=no docker/Dockerfile $SSH_USER@$SSH_HOST:/opt/docker-version/Dockerfile
           no_output_timeout: 20m
 
 #      - run:
