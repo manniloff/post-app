@@ -206,7 +206,7 @@ jobs:
             # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
             
             # Construct the notification message using printf
-            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s %s\n  *- Build:* %s %s\n  *- Artefact Delivery:* %s %s\n  *- Artefact Deploy:* %s %s" \
+            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s\n  *- Build:* %s\n  *- Artefact Delivery:* %s\n  *- Artefact Deploy:* %s" \
                    "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
                    "$TEST_JOB_STATUS_EMOJI" \
                    "$BUILD_JOB_STATUS_EMOJI" \
