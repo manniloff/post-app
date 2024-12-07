@@ -137,6 +137,17 @@ jobs:
               docker-compose down &&
               docker-compose up -d
             "
+  notify:
+    executor: posts-executor
+    docker:
+      - image: curlimages/curl:7.87.0
+    steps:
+      - run:
+          name: Send Telegram Notification
+          command: |
+            curl -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
+            -d "chat_id=845733750" \
+            -d "text=Build failed for job {{ circleci.build_url }}!"
 workflows:
   version: 2
   build_test_deploy:
@@ -156,3 +167,8 @@ workflows:
       - artifact-deploy:
           requires:
             - artefact-delivery
+
+#APP TELEGRAM BOT
+#Bot name = app-notification
+#username = manniloff_app_notification_bot
+#Use this token to access the HTTP API: 8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8
