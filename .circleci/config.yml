@@ -140,14 +140,23 @@ jobs:
   notify:
     executor: posts-executor
     docker:
-      - image: curlimages/curl:7.87.0
+      - image: circleci/python:3.8
     steps:
       - run:
-          name: Send Telegram Notification
+          name: Send notification to Telegram
           command: |
+            STATUS="{{ circleci.status }}"  # Статус сборки (успешно или неудачно)
+            BUILD_URL="{{ circleci.build_url }}"  # URL сборки
+            BUILD_NUMBER="{{ circleci.build_num }}"  # Номер сборки
+            if [ "$STATUS" == "success" ]; then
+              MESSAGE="Build #${BUILD_NUMBER} succeeded! ${BUILD_URL}"
+            else
+              MESSAGE="Build #${BUILD_NUMBER} failed! ${BUILD_URL}"
+            fi
             curl -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
-            -d "chat_id=845733750" \
-            -d "text=Build failed for job {{ circleci.build_url }}!"
+              -d "chat_id=845733750" \
+              -d text="${MESSAGE}"
+
 workflows:
   version: 2
   build_test_deploy:
