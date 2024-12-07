@@ -75,7 +75,7 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-  deploy:
+  artefact-delivery:
     executor: posts-executor
     docker:
       - image: cimg/base:stable
@@ -111,6 +111,24 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
+  artifact-deploy:
+    executor: posts-executor
+    docker:
+      - image: cimg/base:stable
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: .
+
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
+      - run:
+          name: Install SSH Client
+          command: sudo apt-get update && sudo apt-get install -y openssh-client
+
       - run:
           name: Build and Run Docker on Server
           command: |
@@ -120,14 +138,18 @@ jobs:
               docker-compose down &&
               docker-compose up -d
             "
-
 workflows:
   version: 2
   build_test_deploy:
     jobs:
       - build
       - test
-      - deploy:
+      - artefact-delivery:
           requires:
             - build
             - test
+      - artifact-deploy:
+          requires:
+            - build
+            - test
+            - artefact-delivery
