@@ -138,11 +138,19 @@ workflows:
       - build
       - test
       - artefact-delivery:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
           requires:
             - build
             - test
       - artifact-deploy:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
           requires:
-            - build
-            - test
             - artefact-delivery
