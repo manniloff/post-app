@@ -130,17 +130,6 @@ jobs:
           at: .
 
       - run:
-          name: Print specific variables
-          command: |
-            echo "CircleCI Build URL: $CIRCLE_BUILD_URL"
-            echo "CircleCI Job Name: $CIRCLE_JOB"
-            echo "CircleCI project repo name: $CIRCLE_PROJECT_REPONAME"
-            echo "CircleCI username: $CIRCLE_USERNAME"
-            echo "CircleCI Branch: $CIRCLE_BRANCH"
-            echo "CircleCI build num: $CIRCLE_BUILD_NUM"
-            echo "CircleCI ci: $CI"
-
-      - run:
           name: Build and Run Docker on Server
           command: |
             ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
@@ -184,10 +173,23 @@ jobs:
                      "$DEPLOY_JOB_STATUS" == "success" ]]; then
                      WORKFLOW_STATUS="success"
                      fi
-                     
-                     # Construct the notification message using printf for proper newline handling
-                     MESSAGE=$(printf "Project: %s\nBranch: %s\nBuild Number: %s\nBuild URL: %s\nWorkflow Status: %s\n\nJobs:\n  test: %s\n  build: %s\n  artefact_delivery: %s\n  artefact_deploy: %s" \
-                     "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" "$TEST_JOB_STATUS" "$BUILD_JOB_STATUS" "$DELIVERY_JOB_STATUS" "$DEPLOY_JOB_STATUS")
+            
+                     # Set color emojis for statuses
+                     status_color() {
+                     [[ "$1" == "success" ]] && echo "✅" || echo "❌"}
+            
+                     TEST_STATUS_COLOR=$(status_color "$TEST_JOB_STATUS")
+                     BUILD_STATUS_COLOR=$(status_color "$BUILD_JOB_STATUS")
+                     DELIVERY_STATUS_COLOR=$(status_color "$DELIVERY_JOB_STATUS")
+                     DEPLOY_STATUS_COLOR=$(status_color "$DEPLOY_JOB_STATUS")
+            
+                     # Construct the notification message using printf
+                     MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  - Test: %s %s\n  - Build: %s %s\n  - Artefact Delivery: %s %s\n  - Artefact Deploy: %s %s" \
+                     "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
+                     "$TEST_JOB_STATUS" "$TEST_STATUS_COLOR" \
+                     "$BUILD_JOB_STATUS" "$BUILD_STATUS_COLOR" \
+                     "$DELIVERY_JOB_STATUS" "$DELIVERY_STATUS_COLOR" \
+                     "$DEPLOY_JOB_STATUS" "$DEPLOY_STATUS_COLOR")
             
             
                      # Send the message to Telegram
