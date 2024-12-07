@@ -141,7 +141,20 @@ jobs:
     executor: posts-executor
     docker:
       - image: circleci/python:3.8
+      - image: cimg/base:stable
     steps:
+      - run:
+            name: Print all environment variables
+            command: printenv
+      - run:
+          name: Print specific variables
+          command: |
+            echo "CircleCI Build URL: $CIRCLE_BUILD_URL"
+            echo "CircleCI Job Name: $CIRCLE_JOB"
+            echo "CircleCI Branch: $CIRCLE_BRANCH"
+            echo "CircleCI Status: $CIRCLECI_STATUS"
+            echo "CircleCI BUILD_NUMBER: CIRCLECI_BUILD_NUM"
+
       - run:
           name: Send notification to Telegram
           command: |
