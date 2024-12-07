@@ -40,6 +40,12 @@ jobs:
       - attach_workspace:
           at: .
 
+      - run:
+          name: Generate Version
+          command: |
+            VERSION="1.0.$(git rev-list --count HEAD)"
+            echo "Generated version: $VERSION"
+
       # Build and test the project
       - run:
           name: Build
@@ -138,19 +144,15 @@ workflows:
       - build
       - test
       - artefact-delivery:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+# Ignore deployment if versioning for app didn't present
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           requires:
             - build
             - test
       - artifact-deploy:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
           requires:
             - artefact-delivery
