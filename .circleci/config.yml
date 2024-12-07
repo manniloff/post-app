@@ -6,6 +6,7 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
+  telegram: circleci/telegram@1.0.0  # Use the official Telegram orb
 
 executors:
   posts-executor:
@@ -190,25 +191,27 @@ jobs:
       - run:
           name: Send notification to Telegram
           command: |
-            STATUS="{{ circleci.status }}"
-            BUILD_URL="{{ circleci.build_url }}"
-            BUILD_NUMBER="{{ circleci.build_num }}"
-            BRANCH="{{ circleci.branch }}"
-            JOB_NAME="{{ circleci.job }}"
-            COMMIT_HASH="{{ circleci.sha1 }}"
-            CIRCLE_PROJECT_REPONAME = "{{ circleci.project.reponame}}"
-            if [ "$STATUS" == "success" ]; then
-              MESSAGE="Build #${BUILD_NUMBER} succeeded! ${BUILD_URL}\nRepo name: ${CIRCLE_PROJECT_REPONAME}\nBranch: ${BRANCH}\nCommit: ${COMMIT_HASH}\nJob: ${JOB_NAME}"
+            FAILED_JOBS=$(circleci-agent step list --skip-passed | grep -i "failed" | awk '{print $1}')
+            if [ -n "$FAILED_JOBS" ]; then
+              STATUS="failed"
+              MESSAGE="Build failed! See details below:\n"
+              for JOB in $FAILED_JOBS; do
+                MESSAGE+="$JOB: Failed\n"
+              done
             else
-              MESSAGE="Build #${BUILD_NUMBER} failed! ${BUILD_URL}\nRepo name: ${CIRCLE_PROJECT_REPONAME}\nBranch: ${BRANCH}\nCommit: ${COMMIT_HASH}\nJob: ${JOB_NAME}"
+              STATUS="success"
+              MESSAGE="Build succeeded! 🎉\n"
             fi
+            
+            MESSAGE+="Project: ${CIRCLE_PROJECT_REPONAME}\n"
+            MESSAGE+="Branch: ${CIRCLE_BRANCH}\n"
+            MESSAGE+="Commit: ${CIRCLE_SHA1}\n"
+            MESSAGE+="Workflow: ${CIRCLE_WORKFLOW_ID}\n"
+            MESSAGE+="Build URL: ${CIRCLE_BUILD_URL}"
+            
             curl -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
               -d "chat_id=845733750" \
               -d text="${MESSAGE}"
-
-      - run:
-          name: Print all environment variables
-          command: printenv
 
 workflows:
   version: 2
@@ -229,7 +232,12 @@ workflows:
       - artefact-deploy:
           requires:
             - artefact-delivery
-      - notify
+      - notify:
+          requires:
+            - test
+            - build
+            - artefact-delivery
+            - artefact-deploy
 
 #APP TELEGRAM BOT
 #Bot name = app-notification
