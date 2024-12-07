@@ -208,10 +208,10 @@ jobs:
             # Construct the notification message using printf
             MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s %s\n  *- Build:* %s %s\n  *- Artefact Delivery:* %s %s\n  *- Artefact Deploy:* %s %s" \
                    "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
-                   "$TEST_JOB_STATUS" "$TEST_JOB_STATUS_EMOJI" \
-                   "$BUILD_JOB_STATUS" "$BUILD_JOB_STATUS_EMOJI" \
-                   "$DELIVERY_JOB_STATUS" "$DELIVERY_JOB_STATUS_EMOJI" \
-                   "$DEPLOY_JOB_STATUS" "$DEPLOY_JOB_STATUS_EMOJI")
+                   "$TEST_JOB_STATUS_EMOJI" \
+                   "$BUILD_JOB_STATUS_EMOJI" \
+                   "$DELIVERY_JOB_STATUS_EMOJI" \
+                   "$DEPLOY_JOB_STATUS_EMOJI")
             
             # Send the message to Telegram
              BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
