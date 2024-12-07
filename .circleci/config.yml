@@ -6,7 +6,6 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  telegram: woltsu/telegram@x.y.z
 
 executors:
   posts-executor:
@@ -60,9 +59,6 @@ jobs:
       - store_artifacts:
           path: ./target
 
-      - telegram/notify:
-          message: "Notification from CircleCI!"
-
   test:
     executor: posts-executor
     docker:
@@ -85,9 +81,6 @@ jobs:
           path: target/surefire-reports
       - store_test_results:
           path: target/surefire-reports
-
-      - telegram/notify:
-          message: "Notification from CircleCI!"
 
   artefact-delivery:
     executor: posts-executor
@@ -124,9 +117,6 @@ jobs:
           command: |
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
-
-      - telegram/notify:
-          message: "Notification from CircleCI!"
 
   artefact-deploy:
     executor: posts-executor
