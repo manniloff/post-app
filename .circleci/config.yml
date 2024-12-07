@@ -170,16 +170,20 @@ jobs:
                   "$BUILD_JOB_STATUS" == "success" && \
                   "$DELIVERY_JOB_STATUS" == "success" && \
                   "$DEPLOY_JOB_STATUS" == "success" ]]; then
-              WORKFLOW_STATUS="✅ Success"
+              WORKFLOW_STATUS="✅"
             else
-              WORKFLOW_STATUS="❌ Failed"
+              WORKFLOW_STATUS="❌"
             fi
+            
+            # Set color emojis for statuses
+                     status_color() {
+                     [[ "$1" == "success" ]] && echo "✅" || echo "❌"}
             
             # Construct the message
             # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
             
             # Construct the notification message using printf
-            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  - Test: %s %s\n  - Build: %s %s\n  - Artefact Delivery: %s %s\n  - Artefact Deploy: %s %s" \
+            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s %s\n  *- Build:* %s %s\n  *- Artefact Delivery:* %s %s\n  *- Artefact Deploy:* %s %s" \
                    "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
                    "$TEST_JOB_STATUS" "$TEST_STATUS_COLOR" \
                    "$BUILD_JOB_STATUS" "$BUILD_STATUS_COLOR" \
