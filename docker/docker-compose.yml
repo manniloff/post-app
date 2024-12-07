@@ -8,11 +8,12 @@ services:
     ports:
       - "1234:1234"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/posts
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/posts
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     depends_on:
       - db
+    restart: on-failure
 
   db:
     image: mysql:8
