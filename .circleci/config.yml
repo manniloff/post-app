@@ -164,7 +164,7 @@ workflows:
           requires:
             - build
             - test
-      - artifact-deploy:
+      - artefact-deploy:
           requires:
             - artefact-delivery
       - notify:
