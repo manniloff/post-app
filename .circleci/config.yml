@@ -71,8 +71,6 @@ jobs:
             echo "CircleCI build num: $CIRCLE_BUILD_NUM"
             echo "CircleCI ci: $CI"
 
-      - run: exit 0
-      - telegram/status
   test:
     executor: posts-executor
     docker:
