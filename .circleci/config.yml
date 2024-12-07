@@ -122,13 +122,6 @@ jobs:
       - attach_workspace:
           at: .
 
-      - add_ssh_keys:
-          fingerprints:
-            - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
-      - run:
-          name: Install SSH Client
-          command: sudo apt-get update && sudo apt-get install -y openssh-client
-
       - run:
           name: Build and Run Docker on Server
           command: |
