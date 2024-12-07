@@ -125,7 +125,7 @@ jobs:
       - run:
           name: Build and Run Docker on Server
           command: |
-            ssh $SSH_USER@$SSH_HOST "
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
               cd /opt/docker-version &&
               docker build -t post-app:latest . &&
               docker-compose down &&
