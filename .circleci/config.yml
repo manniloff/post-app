@@ -6,7 +6,7 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  telegram: uniqueck/telegram-orb@0.0.1
+  telegram: woltsu/telegram@x.y.z
 
 executors:
   posts-executor:
@@ -60,16 +60,8 @@ jobs:
       - store_artifacts:
           path: ./target
 
-      - run:
-          name: Print specific variables
-          command: |
-            echo "CircleCI Build URL: $CIRCLE_BUILD_URL"
-            echo "CircleCI Job Name: $CIRCLE_JOB"
-            echo "CircleCI project repo name: $CIRCLE_PROJECT_REPONAME"
-            echo "CircleCI username: $CIRCLE_USERNAME"
-            echo "CircleCI Branch: $CIRCLE_BRANCH"
-            echo "CircleCI build num: $CIRCLE_BUILD_NUM"
-            echo "CircleCI ci: $CI"
+      - telegram/notify:
+          message: "Notification from CircleCI!"
 
   test:
     executor: posts-executor
@@ -94,16 +86,8 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-      - run:
-          name: Print specific variables
-          command: |
-            echo "CircleCI Build URL: $CIRCLE_BUILD_URL"
-            echo "CircleCI Job Name: $CIRCLE_JOB"
-            echo "CircleCI project repo name: $CIRCLE_PROJECT_REPONAME"
-            echo "CircleCI username: $CIRCLE_USERNAME"
-            echo "CircleCI Branch: $CIRCLE_BRANCH"
-            echo "CircleCI build num: $CIRCLE_BUILD_NUM"
-            echo "CircleCI ci: $CI"
+      - telegram/notify:
+          message: "Notification from CircleCI!"
 
   artefact-delivery:
     executor: posts-executor
@@ -141,16 +125,8 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
-      - run:
-          name: Print specific variables
-          command: |
-            echo "CircleCI Build URL: $CIRCLE_BUILD_URL"
-            echo "CircleCI Job Name: $CIRCLE_JOB"
-            echo "CircleCI project repo name: $CIRCLE_PROJECT_REPONAME"
-            echo "CircleCI username: $CIRCLE_USERNAME"
-            echo "CircleCI Branch: $CIRCLE_BRANCH"
-            echo "CircleCI build num: $CIRCLE_BUILD_NUM"
-            echo "CircleCI ci: $CI"
+      - telegram/notify:
+          message: "Notification from CircleCI!"
 
   artefact-deploy:
     executor: posts-executor
@@ -195,14 +171,52 @@ jobs:
             STATUS="$CIRCLE_JOB_STATUS"
             PROJECT="$CIRCLE_PROJECT_REPONAME"
             BRANCH="$CIRCLE_BRANCH"
-            COMMIT="$CIRCLE_SHA1"
-            WORKFLOW="$CIRCLE_WORKFLOW_ID"
+            USERNAME="$CIRCLE_USERNAME"
+            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
             BUILD_URL="$CIRCLE_BUILD_URL"
-            MESSAGE="Project: $PROJECT\nBranch: $BRANCH\nCommit: $COMMIT\nWorkflow: $WORKFLOW\nBuild URL: $BUILD_URL\nStatus: $STATUS"
+            WORKFLOW_ID=${CIRCLE_WORKFLOW_ID}
             
-            curl -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
-              -d "chat_id=845733750" \
-              -d text="${MESSAGE}"
+            # Get workflow jobs using CircleCI API
+            JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
+              "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
+            
+            # Extract job statuses using jq
+            TEST_JOB_STATUS=$(echo $JOBS | jq -r '.items[] | select(.name=="test") | .status')
+            BUILD_JOB_STATUS=$(echo $JOBS | jq -r '.items[] | select(.name=="build") | .status')
+            DELIVERY_JOB_STATUS=$(echo $JOBS | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+            DEPLOY_JOB_STATUS=$(echo $JOBS | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+            
+            # Determine workflow status (success if all jobs succeed, otherwise failed)
+            if [[ "$TEST_JOB_STATUS" == "success" && \
+                  "$BUILD_JOB_STATUS" == "success" && \
+                  "$DELIVERY_JOB_STATUS" == "success" && \
+                  "$DEPLOY_JOB_STATUS" == "success" ]]; then
+              WORKFLOW_STATUS="success"
+            else
+              WORKFLOW_STATUS="failed"
+            fi
+            
+            # Construct the message
+            MESSAGE="Project: $PROJECT
+Branch: $BRANCH
+Build Number: $BUILD_NUMBER
+Build URL: $BUILD_URL
+Workflow Status: $WORKFLOW_STATUS
+
+Jobs:
+  test: $TEST_JOB_STATUS
+  build: $BUILD_JOB_STATUS
+  artefact_delivery: $DELIVERY_JOB_STATUS
+  artefact_deploy: $DEPLOY_JOB_STATUS"
+    
+    # Send the message to your Telegram bot
+    BOT_TOKEN="your_bot_token_here"
+    CHAT_ID="your_chat_id_here"
+    curl -s -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
+    -d chat_id="845733750" \
+    -d text="${MESSAGE}" \
+    -d parse_mode="Markdown"
+
 
 workflows:
   version: 2
