@@ -177,7 +177,8 @@ jobs:
             WORKFLOW_ID="${CIRCLE_WORKFLOW_ID}"
             
             # Fetch workflow jobs using CircleCI API
-            JOBS=$(curl "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
+            JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
+              "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
             
             # Use jq to extract job statuses
             TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
@@ -195,28 +196,28 @@ jobs:
             fi
             
             # Construct the notification message
-            MESSAGE=$(cat <<EOF
-  Project: $PROJECT
-  Branch: $BRANCH
-  Build Number: $BUILD_NUMBER
-  Build URL: $BUILD_URL
-  Workflow Status: $WORKFLOW_STATUS
-
-  Jobs:
-    - Test: $TEST_JOB_STATUS
-    - Build: $BUILD_JOB_STATUS
-    - Artefact Delivery: $DELIVERY_JOB_STATUS
-    - Artefact Deploy: $DEPLOY_JOB_STATUS
-  EOF
-  )
+            MESSAGE=$(cat <<-EOF
+              Project: $PROJECT
+              Branch: $BRANCH
+              Build Number: $BUILD_NUMBER
+              Build URL: $BUILD_URL
+              Workflow Status: $WORKFLOW_STATUS
+            
+              Jobs:
+                - Test: $TEST_JOB_STATUS
+                - Build: $BUILD_JOB_STATUS
+                - Artefact Delivery: $DELIVERY_JOB_STATUS
+                - Artefact Deploy: $DEPLOY_JOB_STATUS
+              EOF
+            )
   
-  # Send the message to Telegram
-  BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
-  CHAT_ID="845733750"
-  curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-  -d chat_id="${CHAT_ID}" \
-  -d text="${MESSAGE}" \
-  -d parse_mode="Markdown"
+            # Send the message to Telegram
+            BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
+            CHAT_ID="845733750"
+            curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -d chat_id="${CHAT_ID}" \
+            -d text="${MESSAGE}" \
+            -d parse_mode="Markdown"
 
 
 workflows:
