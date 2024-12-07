@@ -176,16 +176,23 @@ jobs:
             fi
             
             # Construct the message
-            MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
+            # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
             
+            # Construct the notification message using printf
+            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  - Test: %s %s\n  - Build: %s %s\n  - Artefact Delivery: %s %s\n  - Artefact Deploy: %s %s" \
+                   "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
+                   "$TEST_JOB_STATUS" "$TEST_STATUS_COLOR" \
+                   "$BUILD_JOB_STATUS" "$BUILD_STATUS_COLOR" \
+                   "$DELIVERY_JOB_STATUS" "$DELIVERY_STATUS_COLOR" \
+                   "$DEPLOY_JOB_STATUS" "$DEPLOY_STATUS_COLOR")
             
-                     # Send the message to Telegram
-                     BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
-                     CHAT_ID="845733750"
-                     curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-                     -d chat_id="${CHAT_ID}" \
-                     -d text="${MESSAGE}" \
-                     -d parse_mode="Markdown"
+            # Send the message to Telegram
+             BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
+             CHAT_ID="845733750"
+             curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+             -d chat_id="${CHAT_ID}" \
+             -d text="${MESSAGE}" \
+             -d parse_mode="Markdown"
 
 
 workflows:
