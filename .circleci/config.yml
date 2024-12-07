@@ -175,9 +175,32 @@ jobs:
               WORKFLOW_STATUS="❌"
             fi
             
-            # Set color emojis for statuses
-                     status_color() {
-                     [[ "$1" == "success" ]] && echo "✅" || echo "❌"}
+            # Helper function to map statuses to emojis
+            function get_status_emoji() {
+              local status=$1
+              if [[ "$status" == "success" ]]; then
+                echo "✅"
+              elif [[ "$status" == "failed" ]]; then
+                echo "❌"
+              elif [[ "$status" == "running" ]]; then
+                echo "🔄"
+              else
+                echo "❔"
+              fi
+            }
+
+            # Extract job statuses with emojis
+            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
+            TEST_JOB_STATUS_EMOJI=$(get_status_emoji "$TEST_JOB_STATUS")
+      
+            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+            BUILD_JOB_STATUS_EMOJI=$(get_status_emoji "$BUILD_JOB_STATUS")
+      
+            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+            DELIVERY_JOB_STATUS_EMOJI=$(get_status_emoji "$DELIVERY_JOB_STATUS")
+      
+            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+            DEPLOY_JOB_STATUS_EMOJI=$(get_status_emoji "$DEPLOY_JOB_STATUS")
             
             # Construct the message
             # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
@@ -185,10 +208,10 @@ jobs:
             # Construct the notification message using printf
             MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s %s\n  *- Build:* %s %s\n  *- Artefact Delivery:* %s %s\n  *- Artefact Deploy:* %s %s" \
                    "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
-                   "$TEST_JOB_STATUS" "$TEST_STATUS_COLOR" \
-                   "$BUILD_JOB_STATUS" "$BUILD_STATUS_COLOR" \
-                   "$DELIVERY_JOB_STATUS" "$DELIVERY_STATUS_COLOR" \
-                   "$DEPLOY_JOB_STATUS" "$DEPLOY_STATUS_COLOR")
+                   "$TEST_JOB_STATUS" "$TEST_JOB_STATUS_EMOJI" \
+                   "$BUILD_JOB_STATUS" "$BUILD_JOB_STATUS_EMOJI" \
+                   "$DELIVERY_JOB_STATUS" "$DELIVERY_JOB_STATUS_EMOJI" \
+                   "$DEPLOY_JOB_STATUS" "$DEPLOY_JOB_STATUS_EMOJI")
             
             # Send the message to Telegram
              BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
