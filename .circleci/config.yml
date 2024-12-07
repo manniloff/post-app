@@ -46,10 +46,18 @@ jobs:
             VERSION="1.0.$(git rev-list --count HEAD)"
             echo "Generated version: $VERSION"
 
+      - run:
+          name: Print all environment variables
+          command: printenv
+
       # Build and test the project
       - run:
           name: Build
-          command: mvn clean install
+          command: mvn cleanl installl
+
+      - run:
+          name: Print all environment variables 2
+          command: printenv
 
       - persist_to_workspace:
           root: .
@@ -144,31 +152,26 @@ jobs:
       - image: cimg/base:stable
     steps:
       - run:
-            name: Print all environment variables
-            command: printenv
-      - run:
-          name: Print specific variables
-          command: |
-            echo "CircleCI Build URL: $CIRCLE_BUILD_URL"
-            echo "CircleCI Job Name: $CIRCLE_JOB"
-            echo "CircleCI Branch: $CIRCLE_BRANCH"
-            echo "CircleCI Status: $CIRCLECI_STATUS"
-            echo "CircleCI BUILD_NUMBER: CIRCLECI_BUILD_NUM"
-
-      - run:
           name: Send notification to Telegram
           command: |
-            STATUS="${CIRCLECI_STATUS}"  # Статус сборки (успешно или неудачно)
-            BUILD_URL="${CIRCLECI_BUILD_URL}"  # URL сборки
-            BUILD_NUMBER="${CIRCLECI_BUILD_NUM}"  # Номер сборки
+            STATUS="{{ circleci.status }}"
+            BUILD_URL="{{ circleci.build_url }}"
+            BUILD_NUMBER="{{ circleci.build_num }}"
+            BRANCH="{{ circleci.branch }}"
+            JOB_NAME="{{ circleci.job }}"
+            COMMIT_HASH="{{ circleci.sha1 }}"
             if [ "$STATUS" == "success" ]; then
-              MESSAGE="Build #${BUILD_NUMBER} succeeded! ${BUILD_URL}"
+              MESSAGE="Build #${BUILD_NUMBER} succeeded! ${BUILD_URL}\nBranch: ${BRANCH}\nCommit: ${COMMIT_HASH}\nJob: ${JOB_NAME}"
             else
-              MESSAGE="Build #${BUILD_NUMBER} failed! ${BUILD_URL}"
+              MESSAGE="Build #${BUILD_NUMBER} failed! ${BUILD_URL}\nBranch: ${BRANCH}\nCommit: ${COMMIT_HASH}\nJob: ${JOB_NAME}"
             fi
             curl -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
               -d "chat_id=845733750" \
               -d text="${MESSAGE}"
+
+      - run:
+          name: Print all environment variables
+          command: printenv
 
 workflows:
   version: 2
