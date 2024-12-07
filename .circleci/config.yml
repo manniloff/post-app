@@ -145,9 +145,9 @@ jobs:
       - run:
           name: Send notification to Telegram
           command: |
-            STATUS="{{ circleci.status }}"  # Статус сборки (успешно или неудачно)
-            BUILD_URL="{{ circleci.build_url }}"  # URL сборки
-            BUILD_NUMBER="{{ circleci.build_num }}"  # Номер сборки
+            STATUS="${CIRCLECI_STATUS}"  # Статус сборки (успешно или неудачно)
+            BUILD_URL="${CIRCLECI_BUILD_URL}"  # URL сборки
+            BUILD_NUMBER="${CIRCLECI_BUILD_NUM}"  # Номер сборки
             if [ "$STATUS" == "success" ]; then
               MESSAGE="Build #${BUILD_NUMBER} succeeded! ${BUILD_URL}"
             else
