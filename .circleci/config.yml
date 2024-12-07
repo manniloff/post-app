@@ -192,7 +192,7 @@ jobs:
       - run:
           name: Send notification to Telegram
           command: |
-            FAILED_JOBS=$(circleci-agent step list --skip-passed | grep -i "failed" | awk '{print $1}')
+            FAILED_JOBS=$(circleci-agent step list | grep -i "failed" | awk '{print $1}')
             if [ -n "$FAILED_JOBS" ]; then
               STATUS="failed"
               MESSAGE="Build failed! See details below:\n"
