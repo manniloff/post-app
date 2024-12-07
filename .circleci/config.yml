@@ -192,23 +192,13 @@ jobs:
       - run:
           name: Send notification to Telegram
           command: |
-            FAILED_JOBS=$(circleci-agent step list | grep -i "failed" | awk '{print $1}')
-            if [ -n "$FAILED_JOBS" ]; then
-              STATUS="failed"
-              MESSAGE="Build failed! See details below:\n"
-              for JOB in $FAILED_JOBS; do
-                MESSAGE+="$JOB: Failed\n"
-              done
-            else
-              STATUS="success"
-              MESSAGE="Build succeeded! 🎉\n"
-            fi
-            
-            MESSAGE+="Project: ${CIRCLE_PROJECT_REPONAME}\n"
-            MESSAGE+="Branch: ${CIRCLE_BRANCH}\n"
-            MESSAGE+="Commit: ${CIRCLE_SHA1}\n"
-            MESSAGE+="Workflow: ${CIRCLE_WORKFLOW_ID}\n"
-            MESSAGE+="Build URL: ${CIRCLE_BUILD_URL}"
+            STATUS="$CIRCLE_JOB_STATUS"
+            PROJECT="$CIRCLE_PROJECT_REPONAME"
+            BRANCH="$CIRCLE_BRANCH"
+            COMMIT="$CIRCLE_SHA1"
+            WORKFLOW="$CIRCLE_WORKFLOW_ID"
+            BUILD_URL="$CIRCLE_BUILD_URL"
+            MESSAGE="Project: $PROJECT\nBranch: $BRANCH\nCommit: $COMMIT\nWorkflow: $WORKFLOW\nBuild URL: $BUILD_URL\nStatus: $STATUS"
             
             curl -X POST "https://api.telegram.org/bot8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8/sendMessage" \
               -d "chat_id=845733750" \
