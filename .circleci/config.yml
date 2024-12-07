@@ -117,7 +117,7 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
-  artifact-deploy:
+  artefact-deploy:
     executor: posts-executor
     docker:
       - image: cimg/base:stable
