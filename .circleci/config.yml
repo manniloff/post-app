@@ -186,20 +186,16 @@ jobs:
             fi
             
             # Construct the notification message
-            MESSAGE=$(cat <<-EOF
-              Project: $PROJECT
-              Branch: $BRANCH
-              Build Number: $BUILD_NUMBER
-              Build URL: $BUILD_URL
-              Workflow Status: $WORKFLOW_STATUS
-            
-              Jobs:
-                - Test: $TEST_JOB_STATUS
-                - Build: $BUILD_JOB_STATUS
-                - Artefact Delivery: $DELIVERY_JOB_STATUS
-                - Artefact Deploy: $DEPLOY_JOB_STATUS
-              EOF
-            )
+            MESSAGE="Project: $PROJECT\n"
+            MESSAGE+="Branch: $BRANCH\n"
+            MESSAGE+="Build Number: $BUILD_NUMBER\n"
+            MESSAGE+="Build URL: $BUILD_URL\n"
+            MESSAGE+="Workflow Status: $WORKFLOW_STATUS\n\n"
+            MESSAGE+="Jobs:\n"
+            MESSAGE+="  test: $TEST_JOB_STATUS\n"
+            MESSAGE+="  build: $BUILD_JOB_STATUS\n"
+            MESSAGE+="  artefact_delivery: $DELIVERY_JOB_STATUS\n"
+            MESSAGE+="  artefact_deploy: $DEPLOY_JOB_STATUS"
   
             # Send the message to Telegram
             BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
