@@ -158,52 +158,45 @@ jobs:
       - run:
           name: Send Notification to Telegram
           command: |
-            # Define variables
-            PROJECT="${CIRCLE_PROJECT_REPONAME}"
-            BRANCH="${CIRCLE_BRANCH}"
-            USERNAME="${CIRCLE_USERNAME}"
-            BUILD_NUMBER="${CIRCLE_BUILD_NUM}"
-            BUILD_URL="${CIRCLE_BUILD_URL}"
-            WORKFLOW_ID="${CIRCLE_WORKFLOW_ID}"
+                     # Define variables
+                     PROJECT="${CIRCLE_PROJECT_REPONAME}"
+                     BRANCH="${CIRCLE_BRANCH}"
+                     USERNAME="${CIRCLE_USERNAME}"
+                     BUILD_NUMBER="${CIRCLE_BUILD_NUM}"
+                     BUILD_URL="${CIRCLE_BUILD_URL}"
+                     WORKFLOW_ID="${CIRCLE_WORKFLOW_ID}"
+                     
+                     # Fetch workflow jobs using CircleCI API
+                     JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
+                     "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
+                     
+                     # Use jq to extract job statuses
+                     TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
+                     BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+                     DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+                     DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+                     
+                     # Determine workflow status
+                     WORKFLOW_STATUS="failed"
+                     if [[ "$TEST_JOB_STATUS" == "success" && \
+                     "$BUILD_JOB_STATUS" == "success" && \
+                     "$DELIVERY_JOB_STATUS" == "success" && \
+                     "$DEPLOY_JOB_STATUS" == "success" ]]; then
+                     WORKFLOW_STATUS="success"
+                     fi
+                     
+                     # Construct the notification message using printf for proper newline handling
+                     MESSAGE=$(printf "Project: %s\nBranch: %s\nBuild Number: %s\nBuild URL: %s\nWorkflow Status: %s\n\nJobs:\n  test: %s\n  build: %s\n  artefact_delivery: %s\n  artefact_deploy: %s" \
+                     "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" "$TEST_JOB_STATUS" "$BUILD_JOB_STATUS" "$DELIVERY_JOB_STATUS" "$DEPLOY_JOB_STATUS")
             
-            # Fetch workflow jobs using CircleCI API
-            JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
-              "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
             
-            # Use jq to extract job statuses
-            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
-            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
-            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
-            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
-            
-            # Determine workflow status
-            WORKFLOW_STATUS="failed"
-            if [[ "$TEST_JOB_STATUS" == "success" && \
-                  "$BUILD_JOB_STATUS" == "success" && \
-                  "$DELIVERY_JOB_STATUS" == "success" && \
-                  "$DEPLOY_JOB_STATUS" == "success" ]]; then
-              WORKFLOW_STATUS="success"
-            fi
-            
-            # Construct the notification message
-            MESSAGE="Project: $PROJECT\n"
-            MESSAGE+="Branch: $BRANCH\n"
-            MESSAGE+="Build Number: $BUILD_NUMBER\n"
-            MESSAGE+="Build URL: $BUILD_URL\n"
-            MESSAGE+="Workflow Status: $WORKFLOW_STATUS\n\n"
-            MESSAGE+="Jobs:\n"
-            MESSAGE+="  test: $TEST_JOB_STATUS\n"
-            MESSAGE+="  build: $BUILD_JOB_STATUS\n"
-            MESSAGE+="  artefact_delivery: $DELIVERY_JOB_STATUS\n"
-            MESSAGE+="  artefact_deploy: $DEPLOY_JOB_STATUS"
-  
-            # Send the message to Telegram
-            BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
-            CHAT_ID="845733750"
-            curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-            -d chat_id="${CHAT_ID}" \
-            -d text="${MESSAGE}" \
-            -d parse_mode="Markdown"
+                     # Send the message to Telegram
+                     BOT_TOKEN="8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8"
+                     CHAT_ID="845733750"
+                     curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+                     -d chat_id="${CHAT_ID}" \
+                     -d text="${MESSAGE}" \
+                     -d parse_mode="Markdown"
 
 
 workflows:
