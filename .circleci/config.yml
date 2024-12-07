@@ -167,8 +167,12 @@ workflows:
       - artifact-deploy:
           requires:
             - artefact-delivery
+      - notify:
+          requires:
+            - artefact-deploy
 
 #APP TELEGRAM BOT
 #Bot name = app-notification
 #username = manniloff_app_notification_bot
 #Use this token to access the HTTP API: 8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8
+#chatId = 845733750
