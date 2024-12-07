@@ -6,7 +6,7 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  telegram-orb: uniqueck/telegram-orb@0.0.1
+  telegram: uniqueck/telegram-orb@0.0.1
 
 executors:
   posts-executor:
