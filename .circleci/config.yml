@@ -6,6 +6,7 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
+  ms-teams-orb: opub/ms-teams-orb@1.0.3
 
 executors:
   posts-executor:
@@ -59,6 +60,9 @@ jobs:
       - store_artifacts:
           path: ./target
 
+      - ms-teams-orb/report:
+          webhook_url: $TEAMS_WEBHOOK_URL
+
   test:
     executor: posts-executor
     docker:
@@ -81,6 +85,9 @@ jobs:
           path: target/surefire-reports
       - store_test_results:
           path: target/surefire-reports
+
+      - ms-teams-orb/report:
+          webhook_url: $TEAMS_WEBHOOK_URL
 
   artefact-delivery:
     executor: posts-executor
@@ -118,6 +125,9 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
+      - ms-teams-orb/report:
+          webhook_url: $TEAMS_WEBHOOK_URL
+
   artefact-deploy:
     executor: posts-executor
     docker:
@@ -139,6 +149,10 @@ jobs:
               docker network prune -f &&
               docker-compose up -d
             "
+
+      - ms-teams-orb/report:
+          webhook_url: $TEAMS_WEBHOOK_URL
+
   notify:
     executor: posts-executor
     docker:
@@ -220,38 +234,8 @@ jobs:
              -d text="${MESSAGE}" \
              -d parse_mode="Markdown"
 
-      - run:
-          name: Send Notification to Teams
-          command: |
-            STATUS="$CIRCLE_JOB_STATUS"
-            PROJECT="$CIRCLE_PROJECT_REPONAME"
-            BRANCH="$CIRCLE_BRANCH"
-            USERNAME="$CIRCLE_USERNAME"
-            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
-            BUILD_URL="$CIRCLE_BUILD_URL"
-            WORKFLOW_STATUS="$CIRCLE_WORKFLOW_STATUS"
-
-            # Сформировать сообщение
-            MESSAGE="{
-              \"@type\": \"MessageCard\",
-              \"@context\": \"http://schema.org/extensions\",
-              \"themeColor\": \"0076D7\",
-              \"summary\": \"CircleCI Build Notification\",
-              \"sections\": [{
-                \"activityTitle\": \"CircleCI Build Notification\",
-                \"activitySubtitle\": \"Project: **$PROJECT**\",
-                \"facts\": [
-                  {\"name\": \"Branch:\", \"value\": \"$BRANCH\"},
-                  {\"name\": \"Build Number:\", \"value\": \"$BUILD_NUMBER\"},
-                  {\"name\": \"Build URL:\", \"value\": \"$BUILD_URL\"},
-                  {\"name\": \"Workflow Status:\", \"value\": \"$WORKFLOW_STATUS\"}
-                ],
-                \"markdown\": true
-              }]
-            }"
-
-            # Отправка сообщения
-            curl -H "Content-Type: application/json" -d "$MESSAGE" "$TEAMS_WEBHOOK_URL"
+      - ms-teams-orb/report:
+          webhook_url: $TEAMS_WEBHOOK_URL
 workflows:
   version: 2
   build_test_deploy:
