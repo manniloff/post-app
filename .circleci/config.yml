@@ -294,12 +294,12 @@ workflows:
       - artefact-deploy:
           requires:
             - artefact-delivery
-      - notify:
-          requires:
-            - test
-            - build
-            - artefact-delivery
-            - artefact-deploy
+#      - notify:
+#          requires:
+#            - test
+#            - build
+#            - artefact-delivery
+#            - artefact-deploy
 
 #APP TELEGRAM BOT
 #Bot name = app-notification
