@@ -176,13 +176,13 @@ jobs:
             # Get workflow jobs using CircleCI API
             JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
               "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
-            
+
             # Extract job statuses using jq
             TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
             BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
             DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
             DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
-            
+
             # Determine workflow status
             if [[ "$TEST_JOB_STATUS" == "success" && \
                   "$BUILD_JOB_STATUS" == "success" && \
@@ -192,7 +192,7 @@ jobs:
             else
               WORKFLOW_STATUS="❌"
             fi
-            
+
             # Helper function to map statuses to emojis
             function get_status_emoji() {
               local status=$1
@@ -211,7 +211,7 @@ jobs:
             TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
             TEST_JOB_STATUS_EMOJI=$(get_status_emoji "$TEST_JOB_STATUS")
 
-           BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
             BUILD_JOB_STATUS_EMOJI=$(get_status_emoji "$BUILD_JOB_STATUS")
 
             DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
@@ -219,6 +219,9 @@ jobs:
 
             DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
             DEPLOY_JOB_STATUS_EMOJI=$(get_status_emoji "$DEPLOY_JOB_STATUS")
+
+            # Construct the message
+            # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
 
             # Construct the notification message using printf
             MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s\n  *- Build:* %s\n  *- Artefact Delivery:* %s\n  *- Artefact Deploy:* %s" \
