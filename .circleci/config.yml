@@ -7,7 +7,6 @@ orbs:
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
   telegram: uniqueck/telegram-orb@0.0.1
-  telegram-orb: woltsu/telegram@dev:alpha
   ms-teams-orb: opub/ms-teams-orb@1.0.3
 
 executors:
@@ -91,8 +90,7 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-      - telegram-orb/notify:
-          message: "Notification from CircleCI!"
+      - telegram/status
 
       - ms-teams-orb/report:
           only_on_fail: false
@@ -137,9 +135,7 @@ jobs:
       - telegram-orb/notify:
           message: "Notification from CircleCI!"
 
-      - ms-teams-orb/report:
-          only_on_fail: false
-          webhook_url: $TEAMS_WEBHOOK_URL
+      - telegram/status
 
   artefact-deploy:
     executor: posts-executor
@@ -162,8 +158,7 @@ jobs:
               docker network prune -f &&
               docker-compose up -d
             "
-      - telegram-orb/notify:
-          message: "Notification from CircleCI!"
+      - telegram/status
 
       - ms-teams-orb/report:
           only_on_fail: false
