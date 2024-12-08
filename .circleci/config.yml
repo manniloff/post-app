@@ -6,7 +6,8 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  telegram: woltsu/telegram@x.y.z
+  telegram: uniqueck/telegram-orb@0.0.1
+  telegram-orb: woltsu/telegram@dev:alpha
   ms-teams-orb: opub/ms-teams-orb@1.0.3
 
 executors:
@@ -61,8 +62,7 @@ jobs:
       - store_artifacts:
           path: ./target
 
-      - telegram/notify:
-          message: "Notification from CircleCI!"
+      - telegram/status
 
       - ms-teams-orb/report:
           only_on_fail: false
@@ -91,7 +91,7 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-      - telegram/notify:
+      - telegram-orb/notify:
           message: "Notification from CircleCI!"
 
       - ms-teams-orb/report:
@@ -134,7 +134,7 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
-      - telegram/notify:
+      - telegram-orb/notify:
           message: "Notification from CircleCI!"
 
       - ms-teams-orb/report:
@@ -162,7 +162,7 @@ jobs:
               docker network prune -f &&
               docker-compose up -d
             "
-      - telegram/notify:
+      - telegram-orb/notify:
           message: "Notification from CircleCI!"
 
       - ms-teams-orb/report:
