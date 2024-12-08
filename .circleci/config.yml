@@ -132,9 +132,6 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
-      - telegram-orb/notify:
-          message: "Notification from CircleCI!"
-
       - telegram/status
 
   artefact-deploy:
