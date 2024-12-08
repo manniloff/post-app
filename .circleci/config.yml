@@ -6,7 +6,7 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  ms-teams-orb: opub/ms-teams-orb@1.0.3
+  ms-teams-notifier: oktapodia/ms-teams-notifier@3.0.0
 
 executors:
   posts-executor:
@@ -60,7 +60,8 @@ jobs:
       - store_artifacts:
           path: ./target
 
-      - ms-teams-orb/report:
+      - ms-teams-notifier/report:
+          only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 
   test:
@@ -86,7 +87,8 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-      - ms-teams-orb/report:
+      - ms-teams-notifier/report:
+          only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 
   artefact-delivery:
@@ -125,7 +127,8 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
-      - ms-teams-orb/report:
+      - ms-teams-notifier/report:
+          only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 
   artefact-deploy:
@@ -150,7 +153,8 @@ jobs:
               docker-compose up -d
             "
 
-      - ms-teams-orb/report:
+      - ms-teams-notifier/report:
+          only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 
   notify:
@@ -234,7 +238,8 @@ jobs:
              -d text="${MESSAGE}" \
              -d parse_mode="Markdown"
 
-      - ms-teams-orb/report:
+      - ms-teams-notifier/report:
+          only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 workflows:
   version: 2
