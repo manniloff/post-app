@@ -6,7 +6,6 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  telegram: uniqueck/telegram-orb@0.0.1
   ms-teams-orb: opub/ms-teams-orb@1.0.3
 
 executors:
@@ -65,8 +64,6 @@ jobs:
           name: Install jq
           command: apk add --no-cache jq
 
-      - telegram/status
-
       - ms-teams-orb/report:
           only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
@@ -93,8 +90,6 @@ jobs:
           path: target/surefire-reports
       - store_test_results:
           path: target/surefire-reports
-
-      - telegram/status
 
       - ms-teams-orb/report:
           only_on_fail: false
@@ -136,7 +131,9 @@ jobs:
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
           no_output_timeout: 20m
 
-      - telegram/status
+      - ms-teams-orb/report:
+          only_on_fail: false
+          webhook_url: $TEAMS_WEBHOOK_URL
 
   artefact-deploy:
     executor: posts-executor
@@ -159,125 +156,87 @@ jobs:
               docker network prune -f &&
               docker-compose up -d
             "
-      - telegram/status
-
       - ms-teams-orb/report:
           only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 
-#  notify:
-#    executor: posts-executor
-#    docker:
-#      - image: circleci/python:3.8
-#      - image: cimg/base:stable
-#    steps:
-#      - run:
-#          name: Send Notification to Telegram
-#          command: |
-#            STATUS="$CIRCLE_JOB_STATUS"
-#            PROJECT="$CIRCLE_PROJECT_REPONAME"
-#            BRANCH="$CIRCLE_BRANCH"
-#            USERNAME="$CIRCLE_USERNAME"
-#            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
-#            BUILD_URL="$CIRCLE_BUILD_URL"
-#            WORKFLOW_ID="$CIRCLE_WORKFLOW_ID"
-#
-#            # Get workflow jobs using CircleCI API
-#            JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
-#              "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
+  notify:
+    executor: posts-executor
+    docker:
+      - image: circleci/python:3.8
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: Send Notification to Telegram
+          command: |
+            STATUS="$CIRCLE_JOB_STATUS"
+            PROJECT="$CIRCLE_PROJECT_REPONAME"
+            BRANCH="$CIRCLE_BRANCH"
+            USERNAME="$CIRCLE_USERNAME"
+            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
+            BUILD_URL="$CIRCLE_BUILD_URL"
+            WORKFLOW_ID="$CIRCLE_WORKFLOW_ID"
+
+            # Get workflow jobs using CircleCI API
+            JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
+              "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
             
-#            # Extract job statuses using jq
-#            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
-#            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
-#            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
-#            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+            # Extract job statuses using jq
+            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
+            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
             
-#            # Determine workflow status
-#            if [[ "$TEST_JOB_STATUS" == "success" && \
-#                  "$BUILD_JOB_STATUS" == "success" && \
-#                  "$DELIVERY_JOB_STATUS" == "success" && \
-#                  "$DEPLOY_JOB_STATUS" == "success" ]]; then
-#              WORKFLOW_STATUS="✅"
-#            else
-#              WORKFLOW_STATUS="❌"
-#            fi
+            # Determine workflow status
+            if [[ "$TEST_JOB_STATUS" == "success" && \
+                  "$BUILD_JOB_STATUS" == "success" && \
+                  "$DELIVERY_JOB_STATUS" == "success" && \
+                  "$DEPLOY_JOB_STATUS" == "success" ]]; then
+              WORKFLOW_STATUS="✅"
+            else
+              WORKFLOW_STATUS="❌"
+            fi
             
-#            # Helper function to map statuses to emojis
-#            function get_status_emoji() {
-#              local status=$1
-#              if [[ "$status" == "success" ]]; then
-#                echo "✅"
-#              elif [[ "$status" == "failed" ]]; then
-#                echo "❌"
-#              elif [[ "$status" == "running" ]]; then
-#                echo "🔄"
-#              else
-#                echo "❔"
-#              fi
-#            }
+            # Helper function to map statuses to emojis
+            function get_status_emoji() {
+              local status=$1
+              if [[ "$status" == "success" ]]; then
+                echo "✅"
+              elif [[ "$status" == "failed" ]]; then
+                echo "❌"
+              elif [[ "$status" == "running" ]]; then
+                echo "🔄"
+              else
+                echo "❔"
+              fi
+            }
 
-#            # Extract job statuses with emojis
-#            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
-#            TEST_JOB_STATUS_EMOJI=$(get_status_emoji "$TEST_JOB_STATUS")
-#
-#           BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
-#            BUILD_JOB_STATUS_EMOJI=$(get_status_emoji "$BUILD_JOB_STATUS")
-#
-#            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
-#            DELIVERY_JOB_STATUS_EMOJI=$(get_status_emoji "$DELIVERY_JOB_STATUS")
-#
-#            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
-#            DEPLOY_JOB_STATUS_EMOJI=$(get_status_emoji "$DEPLOY_JOB_STATUS")
+            # Extract job statuses with emojis
+            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
+            TEST_JOB_STATUS_EMOJI=$(get_status_emoji "$TEST_JOB_STATUS")
 
-#            # Construct the message
-#            # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
-            
-#            # Construct the notification message using printf
-#            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s\n  *- Build:* %s\n  *- Artefact Delivery:* %s\n  *- Artefact Deploy:* %s" \
-#                   "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
-#                   "$TEST_JOB_STATUS_EMOJI" \
-#                   "$BUILD_JOB_STATUS_EMOJI" \
-#                   "$DELIVERY_JOB_STATUS_EMOJI" \
-#                   "$DEPLOY_JOB_STATUS_EMOJI")
-#
-#            # Send the message to Telegram
-#             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-#             -d chat_id="${TELEGRAM_CHAT_ID}" \
-#             -d text="${MESSAGE}" \
-#             -d parse_mode="Markdown"
+           BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+            BUILD_JOB_STATUS_EMOJI=$(get_status_emoji "$BUILD_JOB_STATUS")
 
-#      - run:
-#          name: Send Notification to Teams
-#          command: |
-#            STATUS="$CIRCLE_JOB_STATUS"
-#            PROJECT="$CIRCLE_PROJECT_REPONAME"
-#            BRANCH="$CIRCLE_BRANCH"
-#            USERNAME="$CIRCLE_USERNAME"
-#            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
-#            BUILD_URL="$CIRCLE_BUILD_URL"
-#            WORKFLOW_STATUS="$CIRCLE_WORKFLOW_STATUS"
+            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+            DELIVERY_JOB_STATUS_EMOJI=$(get_status_emoji "$DELIVERY_JOB_STATUS")
 
-#            # Сформировать сообщение
-#            MESSAGE="{
-#              \"@type\": \"MessageCard\",
-#              \"@context\": \"http://schema.org/extensions\",
-#              \"themeColor\": \"0076D7\",
-#              \"summary\": \"CircleCI Build Notification\",
-#              \"sections\": [{
-#                \"activityTitle\": \"CircleCI Build Notification\",
-#                \"activitySubtitle\": \"Project: **$PROJECT**\",
-#                \"facts\": [
-#                  {\"name\": \"Branch:\", \"value\": \"$BRANCH\"},
-#                  {\"name\": \"Build Number:\", \"value\": \"$BUILD_NUMBER\"},
-#                  {\"name\": \"Build URL:\", \"value\": \"$BUILD_URL\"},
-#                  {\"name\": \"Workflow Status:\", \"value\": \"$WORKFLOW_STATUS\"}
-#                ],
-#                \"markdown\": true
-#              }]
-#            }"
+            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+            DEPLOY_JOB_STATUS_EMOJI=$(get_status_emoji "$DEPLOY_JOB_STATUS")
 
-#            # Отправка сообщения
-#            curl -H "Content-Type: application/json" -d "$MESSAGE" "$TEAMS_WEBHOOK_URL"
+            # Construct the notification message using printf
+            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s\n  *- Build:* %s\n  *- Artefact Delivery:* %s\n  *- Artefact Deploy:* %s" \
+                   "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
+                   "$TEST_JOB_STATUS_EMOJI" \
+                   "$BUILD_JOB_STATUS_EMOJI" \
+                   "$DELIVERY_JOB_STATUS_EMOJI" \
+                   "$DEPLOY_JOB_STATUS_EMOJI")
+
+            # Send the message to Telegram
+             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+             -d chat_id="${TELEGRAM_CHAT_ID}" \
+             -d text="${MESSAGE}" \
+             -d parse_mode="Markdown"
 
 workflows:
   version: 2
@@ -298,12 +257,12 @@ workflows:
       - artefact-deploy:
           requires:
             - artefact-delivery
-#      - notify:
-#          requires:
-#            - test
-#            - build
-#            - artefact-delivery
-#            - artefact-deploy
+      - notify:
+          requires:
+            - test
+            - build
+            - artefact-delivery
+            - artefact-deploy
 
 #APP TELEGRAM BOT
 #Bot name = app-notification
