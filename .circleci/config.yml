@@ -60,10 +60,6 @@ jobs:
       - store_artifacts:
           path: ./target
 
-      - run:
-          name: Install jq
-          command: apk add --no-cache jq
-
       - ms-teams-orb/report:
           only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
