@@ -238,9 +238,42 @@ jobs:
              -d text="${MESSAGE}" \
              -d parse_mode="Markdown"
 
-      - ms-teams-orb/report:
-          only_on_fail: false
-          webhook_url: $TEAMS_WEBHOOK_URL
+      - run:
+          name: Send Notification to Teams
+          command: |
+            STATUS="$CIRCLE_JOB_STATUS"
+            PROJECT="$CIRCLE_PROJECT_REPONAME"
+            BRANCH="$CIRCLE_BRANCH"
+            USERNAME="$CIRCLE_USERNAME"
+            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
+            BUILD_URL="$CIRCLE_BUILD_URL"
+            WORKFLOW_STATUS="$CIRCLE_WORKFLOW_STATUS"
+
+            # Сформировать сообщение
+            MESSAGE="{
+              \"@type\": \"MessageCard\",
+              \"@context\": \"http://schema.org/extensions\",
+              \"themeColor\": \"0076D7\",
+              \"summary\": \"CircleCI Build Notification\",
+              \"sections\": [{
+                \"activityTitle\": \"CircleCI Build Notification\",
+                \"activitySubtitle\": \"Project: **$PROJECT**\",
+                \"facts\": [
+                  {\"name\": \"Branch:\", \"value\": \"$BRANCH\"},
+                  {\"name\": \"Build Number:\", \"value\": \"$BUILD_NUMBER\"},
+                  {\"name\": \"Build URL:\", \"value\": \"$BUILD_URL\"},
+                  {\"name\": \"Workflow Status:\", \"value\": \"$WORKFLOW_STATUS\"}
+                ],
+                \"markdown\": true
+              }]
+            }"
+
+            # URL вашего вебхука Teams
+            TEAMS_WEBHOOK_URL="https://your-teams-webhook-url"
+
+            # Отправка сообщения
+            curl -H "Content-Type: application/json" -d "$MESSAGE" "$TEAMS_WEBHOOK_URL"
+
 workflows:
   version: 2
   build_test_deploy:
