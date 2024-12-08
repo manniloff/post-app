@@ -6,7 +6,7 @@ orbs:
   azure-aks: circleci/azure-aks@0.3.0
   azure-cli: circleci/azure-cli@1.2.2
   helm: circleci/helm@2.0.0
-  telegram: uniqueck/telegram-orb@0.0.1
+  telegram: uniqueck/telegram-orb@0.0.2
   ms-teams-orb: opub/ms-teams-orb@1.0.3
 
 executors:
@@ -60,6 +60,10 @@ jobs:
 
       - store_artifacts:
           path: ./target
+
+      - run:
+          name: Install jq
+          command: apk add --no-cache jq
 
       - telegram/status
 
