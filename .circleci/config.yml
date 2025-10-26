@@ -110,6 +110,11 @@ jobs:
           command: sudo apt-get update && sudo apt-get install -y openssh-client
 
       - run:
+          name: Create work folder if doesn't exists
+          command: |
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p /opt/docker-version"
+
+      - run:
           name: SSH connection and deploy .war file
           command: |
             scp -v -o StrictHostKeyChecking=no target/post-app.war $SSH_USER@$SSH_HOST:/opt/docker-version/post-app.war
