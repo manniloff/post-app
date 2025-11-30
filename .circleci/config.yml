@@ -94,7 +94,8 @@ jobs:
   azure-portal:
     executor: posts-executor
     docker:
-      - image: cimg/base:stable
+      - image: cimg/openjdk:17.0
+    resource_class: large
 
     steps:
       - checkout
