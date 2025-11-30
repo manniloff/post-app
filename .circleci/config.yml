@@ -91,6 +91,35 @@ jobs:
           only_on_fail: false
           webhook_url: $TEAMS_WEBHOOK_URL
 
+  azure-portal:
+    executor: posts-executor
+    docker:
+      - image: cimg/base:stable
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 24.0.2
+
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t post-app:latest .
+
+      - run:
+          name: Login to Azure Container Registry
+          command: |
+            echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
+
+      - run:
+          name: Push Docker image to ACR
+          command: |
+            docker tag post-app:latest $AZURE_ACR_SERVER/post-app:latest
+            docker push $AZURE_ACR_SERVER/post-app:latest
+
   artefact-delivery:
     executor: posts-executor
     docker:
@@ -125,22 +154,6 @@ jobs:
           command: |
             scp -v -o StrictHostKeyChecking=no docker/Dockerfile $SSH_USER@$SSH_HOST:/opt/docker-version/Dockerfile
           no_output_timeout: 20m
-
-      - run:
-          name: Build Docker image
-          command: |
-            docker build -t post-app:latest .
-
-      - run:
-          name: Login to Azure Container Registry
-          command: |
-            echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
-
-      - run:
-          name: Push Docker image to ACR
-          command: |
-            docker tag post-app:latest $AZURE_ACR_SERVER/post-app:latest
-            docker push $AZURE_ACR_SERVER/post-app:latest
 
       - run:
           name: SSH connection and deploy docker-compose
@@ -264,6 +277,10 @@ workflows:
     jobs:
       - build
       - test
+      - azure-portal:
+          requires:
+            - test
+            - build
       - artefact-delivery:
 # Ignore deployment if versioning for app didn't present
 #          filters:
