@@ -127,6 +127,22 @@ jobs:
           no_output_timeout: 20m
 
       - run:
+          name: Build Docker image
+          command: |
+            docker build -t post-app:latest .
+
+      - run:
+          name: Login to Azure Container Registry
+          command: |
+            echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
+
+      - run:
+          name: Push Docker image to ACR
+          command: |
+            docker tag post-app:latest $AZURE_ACR_SERVER/post-app:latest
+            docker push $AZURE_ACR_SERVER/post-app:latest
+
+      - run:
           name: SSH connection and deploy docker-compose
           command: |
             scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
