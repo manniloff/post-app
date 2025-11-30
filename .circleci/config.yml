@@ -153,9 +153,9 @@ jobs:
             ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
               cd /opt/docker-version &&
               docker build -t post-app:latest . &&
-              docker-compose down --volumes --remove-orphans &&
+              docker compose down --volumes --remove-orphans &&
               docker network prune -f &&
-              docker-compose up -d
+              docker compose up -d
             "
       - ms-teams-orb/report:
           only_on_fail: false
