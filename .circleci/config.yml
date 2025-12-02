@@ -140,7 +140,7 @@ jobs:
             git config --global user.email "circleci@example.com"
             git config --global user.name "CircleCI"
             git add k8s/deployment.yaml
-            git commit -m "Update deployment image to $REGISTRY/$IMAGE_NAME:$IMAGE_TAG" || echo "No changes to commit"
+            git commit -am "Update deployment image to $REGISTRY/$IMAGE_NAME:$IMAGE_TAG [skip ci]" || echo "No changes to commit"
             git push origin circleCI
 
       - persist_to_workspace:
@@ -309,10 +309,6 @@ workflows:
           requires:
             - test
             - build
-      - azure-portal:
-          filters:
-            branches:
-              - circleCi
  #     - artefact-delivery:
 # Ignore deployment if versioning for app didn't present
 #          filters:
