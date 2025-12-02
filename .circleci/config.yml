@@ -309,6 +309,10 @@ workflows:
           requires:
             - test
             - build
+      - azure-portal:
+          filters:
+            branches:
+              - circleCi
  #     - artefact-delivery:
 # Ignore deployment if versioning for app didn't present
 #          filters:
