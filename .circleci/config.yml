@@ -113,7 +113,7 @@ jobs:
             TAG="${VERSION}-${DATE}"
             
             IMAGE="slregistry.azurecr.io/${APP_NAME}:${TAG}"
-            docker build -t IMAGE .
+            docker build -t $IMAGE .
 
       - run:
           name: Login to Azure Container Registry
@@ -123,8 +123,8 @@ jobs:
       - run:
           name: Push Docker image to ACR
           command: |
-            docker tag post-app:latest $IMAGE_NAME
-            docker push $IMAGE_NAME
+            docker tag post-app:latest $IMAGE
+            docker push $IMAGE
 
   artefact-delivery:
     executor: posts-executor
