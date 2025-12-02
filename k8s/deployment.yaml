@@ -20,7 +20,7 @@ spec:
       containers:
         - name: post-app
           # PLACEHOLDER: image will be replaced by CI (see steps)
-          image: .azurecr.io/myapp:1745e4de01c7571f73c38d246aa176c487dfb1aa
+          image: .azurecr.io/myapp:eac03fc841e3c3279946159ce13b204bfc36c4e0
           ports:
             - containerPort: 8888
           readinessProbe:
