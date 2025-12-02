@@ -95,6 +95,10 @@ jobs:
     executor: posts-executor
     resource_class: large
 
+    environment:
+      REGISTRY: slregistry.azurecr.io
+      IMAGE_NAME: post
+
     steps:
       - checkout
       - setup_remote_docker
@@ -103,21 +107,17 @@ jobs:
           at: .
 
       - run:
-          name: Build Docker image
+          name: Generate image tag
           command: |
-            APP_NAME="post-app"
-            VERSION="1.0.0"
-            DATE=$(date -u +'%Y%m%d.%H%M%S')
-            TAG="${VERSION}-${DATE}"
-
-            IMAGE="slregistry.azurecr.io/${APP_NAME}:${TAG}"
-
-            # Save var to environment for next steps
-            echo "export IMAGE=$IMAGE" >> $BASH_ENV
+            VERSION="1.0.0-$(date +%Y%m%d.%H%M%S)"
+            echo "export IMAGE_TAG=$VERSION" >> $BASH_ENV
             source $BASH_ENV
+            echo "Generated tag: $IMAGE_TAG"
 
-            echo "Building image: $IMAGE"
-            docker build -t "$IMAGE" .
+      - run:
+          name: Build docker image
+          command: |
+            docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
 
       - run:
           name: Login to Azure Container Registry
@@ -125,16 +125,14 @@ jobs:
             echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
 
       - run:
-          name: Push Docker image to ACR
+          name: Push docker image
           command: |
-            source $BASH_ENV
-            echo "Pushing image: $IMAGE"
-            docker push "$IMAGE"
+            docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
       - run:
           name: Update deployment.yaml with new image
           command: |
-            sed -i "s|image: .*$|image: ${ACR_NAME}.azurecr.io/myapp:${CIRCLE_SHA1}|" k8s/deployment.yaml          
+            sed -i "s|image:.*|image: $REGISTRY/$IMAGE_NAME:$IMAGE_TAG|" k8s/deployment.yaml          
 
       - run:
           name: Commit updated deployment.yaml
@@ -142,9 +140,13 @@ jobs:
             git config --global user.email "circleci@example.com"
             git config --global user.name "CircleCI"
             git add k8s/deployment.yaml
-            git commit -m "Update deployment image to ${CIRCLE_SHA1}" || echo "No changes to commit"
+            git commit -m "Update deployment image to ${$REGISTRY/$IMAGE_NAME:$IMAGE_TAG}" || echo "No changes to commit"
             git push origin circleCI
 
+      - persist_to_workspace:
+          root: .
+          paths:
+            - k8s/deployment.yaml
           #  artefact-delivery:
 #    executor: posts-executor
 #    docker:
