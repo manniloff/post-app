@@ -109,9 +109,8 @@ jobs:
       - run:
           name: Generate image tag
           command: |
-            VERSION="1.0.0-$(date +%Y%m%d.%H%M%S)"
-            echo "export IMAGE_TAG=$VERSION" >> $BASH_ENV
-            source $BASH_ENV
+            export IMAGE_TAG="1.0.0-$(date -u +%Y%m%d.%H%M%S)"
+            echo "IMAGE_TAG=$IMAGE_TAG" >> $BASH_ENV
             echo "Generated tag: $IMAGE_TAG"
 
       - run:
@@ -202,7 +201,7 @@ jobs:
 #      - checkout
 
 #      - attach_workspace:
-          at: .
+#          at: .
 
 #      - run:
 #          name: Build and Run Docker on Server
