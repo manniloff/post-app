@@ -131,7 +131,12 @@ jobs:
             echo "Pushing image: $IMAGE"
             docker push "$IMAGE"
 
-#  artefact-delivery:
+      - run:
+          name: Update deployment.yaml with new image
+          command: |
+            sed -i "s#image: .*$#image: $ACR_NAME.azurecr.io/myapp:${CIRCLE_SHA1}#" k8s/deployment.yaml          
+
+          #  artefact-delivery:
 #    executor: posts-executor
 #    docker:
 #      - image: cimg/base:stable
