@@ -123,7 +123,8 @@ jobs:
       - run:
           name: Push Docker image to ACR
           command: |
-            docker tag post-app:latest $IMAGE
+            source $BASH_ENV
+            echo "Pushing image: $IMAGE"
             docker push $IMAGE
 
   artefact-delivery:
