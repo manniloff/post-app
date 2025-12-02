@@ -136,6 +136,15 @@ jobs:
           command: |
             sed -i "s|image: .*$|image: ${ACR_NAME}.azurecr.io/myapp:${CIRCLE_SHA1}|" k8s/deployment.yaml          
 
+      - run:
+          name: Commit updated deployment.yaml
+          command: |
+            git config --global user.email "circleci@example.com"
+            git config --global user.name "CircleCI"
+            git add k8s/deployment.yaml
+            git commit -m "Update deployment image to ${CIRCLE_SHA1}" || echo "No changes to commit"
+            git push origin circleCI
+
           #  artefact-delivery:
 #    executor: posts-executor
 #    docker:
