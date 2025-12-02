@@ -93,8 +93,6 @@ jobs:
 
   azure-portal:
     executor: posts-executor
-    docker:
-      - image: cimg/openjdk:17.0
     resource_class: large
 
     steps:
@@ -111,9 +109,15 @@ jobs:
             VERSION="1.0.0"
             DATE=$(date -u +'%Y%m%d.%H%M%S')
             TAG="${VERSION}-${DATE}"
-            
+
             IMAGE="slregistry.azurecr.io/${APP_NAME}:${TAG}"
-            docker build -t $IMAGE .
+
+            # Save var to environment for next steps
+            echo "export IMAGE=$IMAGE" >> $BASH_ENV
+            source $BASH_ENV
+
+            echo "Building image: $IMAGE"
+            docker build -t "$IMAGE" .
 
       - run:
           name: Login to Azure Container Registry
@@ -125,7 +129,7 @@ jobs:
           command: |
             source $BASH_ENV
             echo "Pushing image: $IMAGE"
-            docker push $IMAGE
+            docker push "$IMAGE"
 
   artefact-delivery:
     executor: posts-executor
