@@ -6,19 +6,13 @@ metadata:
 spec:
   project: post-app
   source:
-    repoURL: 'https://github.com/manniloff/post-app.git'
-    targetRevision: HEAD
+    repoURL: https://github.com/manniloff/post-app.git
     path: k8s
+    targetRevision: HEAD
   destination:
-    namespace: post-app   # namespace для Service/Deployment
+    namespace: post-app
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
