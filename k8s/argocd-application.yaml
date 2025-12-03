@@ -9,12 +9,9 @@ spec:
     repoURL: 'https://github.com/manniloff/post-app.git'
     targetRevision: HEAD
     path: k8s
-  destinations:
-    - namespace: post-app
-      server: https://kubernetes.default.svc
-  clusterResourceWhitelist: # разрешаем кластерные ресурсы
-      - group: ""
-        kind: Namespace
+  destination:
+    namespace: post-app   # namespace для Service/Deployment
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
