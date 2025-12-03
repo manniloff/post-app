@@ -4,7 +4,7 @@ metadata:
   name: post-app
   namespace: argocd
 spec:
-  project: default
+  project: post-app
   source:
     repoURL: 'https://github.com/manniloff/post-app.git'
     targetRevision: HEAD
