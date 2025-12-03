@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: post-app
-  namespace: argocd
+  namespace: post-app
   labels:
     app: post-app
 spec:
