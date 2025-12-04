@@ -117,7 +117,7 @@ jobs:
           name: Build docker image
           command: |
             docker buildx build \
-            --platform linux/amd64,linux/arm64 \
+            --platform linux/amd64 \
             -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
             --push .
 
