@@ -95,13 +95,19 @@ jobs:
     executor: posts-executor
     resource_class: large
 
+    docker:
+      - image: cimg/base:2022.09
+
     environment:
       REGISTRY: slregistry.azurecr.io
       IMAGE_NAME: post
 
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - docker/setup-buildx:
+          version: latest
 
       - attach_workspace:
           at: .
@@ -112,20 +118,6 @@ jobs:
             export IMAGE_TAG="1.0.0-$(date -u +%Y%m%d.%H%M%S)"
             echo "IMAGE_TAG=$IMAGE_TAG" >> $BASH_ENV
             echo "Generated tag: $IMAGE_TAG"
-
-      - run:
-          name: Install buildx
-          command: |
-            mkdir -p ~/.docker/cli-plugins
-            curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
-            chmod +x ~/.docker/cli-plugins/docker-buildx
-            docker buildx version
-
-      - run:
-          name: Create and use buildx builder
-          command: |
-            docker buildx create --name mybuilder --use
-            docker buildx inspect --bootstrap
 
       - run:
           name: Login to Azure Container Registry
