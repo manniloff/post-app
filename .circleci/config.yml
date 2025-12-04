@@ -121,11 +121,11 @@ jobs:
             chmod +x ~/.docker/cli-plugins/docker-buildx
             docker buildx version
 
-            - run:
-                name: Create and use buildx builder
-                command: |
-                  docker buildx create --name mybuilder --use
-                  docker buildx inspect --bootstrap
+      - run:
+          name: Create and use buildx builder
+          command: |
+            docker buildx create --name mybuilder --use
+            docker buildx inspect --bootstrap
 
       - run:
           name: Login to Azure Container Registry
