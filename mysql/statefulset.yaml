@@ -30,13 +30,6 @@ spec:
           volumeMounts:
             - name: mysql-storage
               mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-    - metadata:
-        name: mysql-storage
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 10Gi
-        storageClassName: ""  # замени при необходимости
+      volumes:
+        - name: mysql-storage
+          emptyDir: { }
