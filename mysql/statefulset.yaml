@@ -23,10 +23,6 @@ spec:
               value: root   # желательно вынести в Secret!
             - name: MYSQL_DATABASE
               value: posts
-            - name: MYSQL_USER
-              value: root
-            - name: MYSQL_PASSWORD
-              value: root
           volumeMounts:
             - name: mysql-storage
               mountPath: /var/lib/mysql
