@@ -22,6 +22,19 @@ spec:
           image: slregistry.azurecr.io/post:1.0.0-20251204.100509
           ports:
             - containerPort: 8888
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://db:3306/posts
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: root
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              value: com.mysql.cj.jdbc.Driver
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+            - name: SPRING_JPA_SHOW_SQL
+              value: "true"
           readinessProbe:
             httpGet:
               path: /actuator/health
