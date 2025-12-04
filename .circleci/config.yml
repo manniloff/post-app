@@ -114,6 +114,20 @@ jobs:
             echo "Generated tag: $IMAGE_TAG"
 
       - run:
+          name: Install buildx
+          command: |
+            mkdir -p ~/.docker/cli-plugins
+            curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+            chmod +x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version
+
+            - run:
+                name: Create and use buildx builder
+                command: |
+                  docker buildx create --name mybuilder --use
+                  docker buildx inspect --bootstrap
+
+      - run:
           name: Login to Azure Container Registry
           command: |
             echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
@@ -122,7 +136,7 @@ jobs:
           name: Build docker image
           command: |
             docker buildx build \
-            --platform linux/amd64 \
+            --platform linux/amd64,linux/arm64 \
             -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
             --push .
 
