@@ -123,16 +123,9 @@ jobs:
             echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
 
       - run:
-          name: Install buildx
+          name: Setup buildx in remote Docker
           command: |
-            mkdir -p ~/.docker/cli-plugins
-            curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
-            chmod +x ~/.docker/cli-plugins/docker-buildx
-            docker buildx version
-
-      - run:
-          name: Create builder
-          command: |
+            docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
             docker buildx create --name mybuilder --use
             docker buildx inspect --bootstrap
 
