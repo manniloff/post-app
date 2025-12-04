@@ -116,7 +116,10 @@ jobs:
       - run:
           name: Build docker image
           command: |
-            docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+            docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
+            --push .
 
       - run:
           name: Login to Azure Container Registry
