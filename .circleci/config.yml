@@ -106,8 +106,6 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - docker/setup-buildx:
-          version: latest
 
       - attach_workspace:
           at: .
@@ -123,6 +121,20 @@ jobs:
           name: Login to Azure Container Registry
           command: |
             echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
+
+      - run:
+          name: Install buildx
+          command: |
+            mkdir -p ~/.docker/cli-plugins
+            curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+            chmod +x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version
+
+      - run:
+          name: Create builder
+          command: |
+            docker buildx create --name mybuilder --use
+            docker buildx inspect --bootstrap
 
       - run:
           name: Build docker image
