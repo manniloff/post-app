@@ -39,11 +39,11 @@ spec:
             httpGet:
               path: /actuator/health
               port: 1234
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 1234
-            initialDelaySeconds: 30
+            initialDelaySeconds: 120
             periodSeconds: 20
