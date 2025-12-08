@@ -31,14 +31,18 @@ public class AuthSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .csrf().disable()  // Отключение защиты от CSRF (при необходимости)
+                .authorizeRequests()
+                .anyRequest().permitAll(); // Разрешить доступ ко всем запросам
+        /*http.csrf().disable()
                 .authorizeRequests().antMatchers("/login", "/registration").permitAll()
                 .antMatchers("/users", "/categories", "/users/*", "/categories/*").hasAuthority("ADMIN")
                 .antMatchers("/posts", "/comments", "/accounts").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
     }
 
     @Override

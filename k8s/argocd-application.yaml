@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: post-app
+  namespace: argocd
+spec:
+  project: post-app
+  source:
+    repoURL: https://github.com/manniloff/post-app.git
+    path: k8s
+    targetRevision: HEAD
+  destination:
+    namespace: post-app
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,349 @@
+version: 2.1
+
+orbs:
+  azure-acr: circleci/azure-acr@0.2.0
+  docker: circleci/docker@3.0.1
+  azure-aks: circleci/azure-aks@0.3.0
+  azure-cli: circleci/azure-cli@1.2.2
+  helm: circleci/helm@2.0.0
+  ms-teams-orb: opub/ms-teams-orb@1.0.3
+
+executors:
+  posts-executor:
+    environment:
+      CONTAINER_IMAGE_NAME: posts/posts
+    docker:
+      - image: cimg/openjdk:8.0
+      - image: cimg/base:2022.09
+
+jobs:
+  build:
+    executor: posts-executor
+    docker:
+      - image: maven:3.8.1-jdk-11
+      - image: circleci/mysql
+      - image: docker:20.10.24
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - restore_cache:
+          key: jars-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: jars-{{ checksum "pom.xml" }}
+
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Generate Version
+          command: |
+            VERSION="1.0.$(git rev-list --count HEAD)"
+            echo "Generated version: $VERSION"
+
+      # Build and test the project
+      - run:
+          name: Build
+          command: mvn clean install
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - target
+
+      - store_artifacts:
+          path: ./target
+
+      - ms-teams-orb/report:
+          only_on_fail: false
+          webhook_url: $TEAMS_WEBHOOK_URL
+
+  test:
+    executor: posts-executor
+    docker:
+      - image: maven:3.8.1-jdk-11
+      - image: circleci/mysql
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "pom.xml" }}
+      - run:
+          name: Test
+          command: mvn test
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: jars-{{ checksum "pom.xml" }}
+
+      - store_artifacts:
+          path: target/surefire-reports
+      - store_test_results:
+          path: target/surefire-reports
+
+      - ms-teams-orb/report:
+          only_on_fail: false
+          webhook_url: $TEAMS_WEBHOOK_URL
+
+  azure-portal:
+    executor: posts-executor
+    resource_class: large
+
+    docker:
+      - image: cimg/base:2022.09
+
+    environment:
+      REGISTRY: slregistry.azurecr.io
+      IMAGE_NAME: post
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Generate image tag
+          command: |
+            export IMAGE_TAG="1.0.0-$(date -u +%Y%m%d.%H%M%S)"
+            echo "IMAGE_TAG=$IMAGE_TAG" >> $BASH_ENV
+            echo "Generated tag: $IMAGE_TAG"
+
+      - run:
+          name: Login to Azure Container Registry
+          command: |
+            echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_SERVER -u $AZURE_ACR_USERNAME --password-stdin
+
+      - run:
+          name: Setup buildx in remote Docker
+          command: |
+            docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
+            docker buildx create --name mybuilder --use
+            docker buildx inspect --bootstrap
+
+      - run:
+          name: Build docker image
+          command: |
+            docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
+            --push .
+
+#      - run:
+#          name: Push docker image
+#          command: |
+#            docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+
+      - run:
+          name: Update deployment.yaml with new image
+          command: |
+            sed -i "s|image:.*|image: $REGISTRY/$IMAGE_NAME:$IMAGE_TAG|" k8s/deployment.yaml          
+
+      - run:
+          name: Commit updated deployment.yaml
+          command: |
+            git config --global user.email "circleci@example.com"
+            git config --global user.name "CircleCI"
+            git add k8s/deployment.yaml
+            git commit -am "Update deployment image to $REGISTRY/$IMAGE_NAME:$IMAGE_TAG [skip ci]" || echo "No changes to commit"
+            git push origin circleCI
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - k8s/deployment.yaml
+          #  artefact-delivery:
+#    executor: posts-executor
+#    docker:
+#      - image: cimg/base:stable
+
+#    steps:
+#      - checkout
+#      - setup_remote_docker
+
+#      - attach_workspace:
+#          at: .
+
+#      - add_ssh_keys:
+#          fingerprints:
+#            - "SHA256:bdQhUpWvsTenmxgrI/Z4u49QPvaTPhHqZk0SZpzUuQE"
+#      - run:
+#          name: Install SSH Client
+#          command: sudo apt-get update && sudo apt-get install -y openssh-client
+
+#      - run:
+#          name: Create work folder if doesn't exists
+#          command: |
+#            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "mkdir -p /opt/docker-version"
+
+#      - run:
+#          name: SSH connection and deploy .war file
+#          command: |
+#            scp -v -o StrictHostKeyChecking=no target/post-app.war $SSH_USER@$SSH_HOST:/opt/docker-version/post-app.war
+#          no_output_timeout: 20m
+
+#      - run:
+#          name: SSH connection and deploy Dockerfile
+#          command: |
+#            scp -v -o StrictHostKeyChecking=no docker/Dockerfile $SSH_USER@$SSH_HOST:/opt/docker-version/Dockerfile
+#          no_output_timeout: 20m
+
+#      - run:
+#          name: SSH connection and deploy docker-compose
+#          command: |
+#            scp -v -o StrictHostKeyChecking=no docker/docker-compose.yml $SSH_USER@$SSH_HOST:/opt/docker-version/docker-compose.yml
+#          no_output_timeout: 20m
+
+#      - ms-teams-orb/report:
+#          only_on_fail: false
+#          webhook_url: $TEAMS_WEBHOOK_URL
+
+#  artefact-deploy:
+#    executor: posts-executor
+#    docker:
+#      - image: cimg/base:stable
+
+#    steps:
+#      - checkout
+
+#      - attach_workspace:
+#          at: .
+
+#      - run:
+#          name: Build and Run Docker on Server
+#          command: |
+#            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+#              cd /opt/docker-version &&
+#              docker build -t post-app:latest . &&
+#              docker compose down --volumes --remove-orphans &&
+#              docker network prune -f &&
+#              docker compose up -d
+#            "
+#      - ms-teams-orb/report:
+#          only_on_fail: false
+#          webhook_url: $TEAMS_WEBHOOK_URL
+
+  notify:
+    executor: posts-executor
+    docker:
+      - image: circleci/python:3.8
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: Send Notification to Telegram
+          command: |
+            STATUS="$CIRCLE_JOB_STATUS"
+            PROJECT="$CIRCLE_PROJECT_REPONAME"
+            BRANCH="$CIRCLE_BRANCH"
+            USERNAME="$CIRCLE_USERNAME"
+            BUILD_NUMBER="$CIRCLE_BUILD_NUM"
+            BUILD_URL="$CIRCLE_BUILD_URL"
+            WORKFLOW_ID="$CIRCLE_WORKFLOW_ID"
+
+            # Get workflow jobs using CircleCI API
+            JOBS=$(curl -s -u "${CIRCLECI_API_TOKEN}:" \
+              "https://circleci.com/api/v2/workflow/${WORKFLOW_ID}/job")
+
+            # Extract job statuses using jq
+            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
+            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+
+            # Determine workflow status
+            if [[ "$TEST_JOB_STATUS" == "success" && \
+                  "$BUILD_JOB_STATUS" == "success" && \
+                  "$DELIVERY_JOB_STATUS" == "success" && \
+                  "$DEPLOY_JOB_STATUS" == "success" ]]; then
+              WORKFLOW_STATUS="✅"
+            else
+              WORKFLOW_STATUS="❌"
+            fi
+
+            # Helper function to map statuses to emojis
+            function get_status_emoji() {
+              local status=$1
+              if [[ "$status" == "success" ]]; then
+                echo "✅"
+              elif [[ "$status" == "failed" ]]; then
+                echo "❌"
+              elif [[ "$status" == "running" ]]; then
+                echo "🔄"
+              else
+                echo "❔"
+              fi
+            }
+
+            # Extract job statuses with emojis
+            TEST_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="test") | .status')
+            TEST_JOB_STATUS_EMOJI=$(get_status_emoji "$TEST_JOB_STATUS")
+
+            BUILD_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="build") | .status')
+            BUILD_JOB_STATUS_EMOJI=$(get_status_emoji "$BUILD_JOB_STATUS")
+
+            DELIVERY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-delivery") | .status')
+            DELIVERY_JOB_STATUS_EMOJI=$(get_status_emoji "$DELIVERY_JOB_STATUS")
+
+            DEPLOY_JOB_STATUS=$(echo "$JOBS" | jq -r '.items[] | select(.name=="artefact-deploy") | .status')
+            DEPLOY_JOB_STATUS_EMOJI=$(get_status_emoji "$DEPLOY_JOB_STATUS")
+
+            # Construct the message
+            # MESSAGE="*Project:* $PROJECT\n*Branch:* $BRANCH\n*Build Number:* $BUILD_NUMBER\n*Build URL:* $BUILD_URL\n*Workflow Status:* $WORKFLOW_STATUS\n\n*Jobs:*\n- *test:* $TEST_JOB_STATUS\n- *build:* $BUILD_JOB_STATUS\n- *artefact_delivery:* $DELIVERY_JOB_STATUS\n- *artefact_deploy:* $DEPLOY_JOB_STATUS"
+
+            # Construct the notification message using printf
+            MESSAGE=$(printf "*Project:* %s\n*Branch:* %s\n*Build Number:* %s\n*Build URL:* %s\n*Workflow Status:* *%s*\n\n*Jobs:*\n  *- Test:* %s\n  *- Build:* %s\n  *- Artefact Delivery:* %s\n  *- Artefact Deploy:* %s" \
+                   "$PROJECT" "$BRANCH" "$BUILD_NUMBER" "$BUILD_URL" "$WORKFLOW_STATUS" \
+                   "$TEST_JOB_STATUS_EMOJI" \
+                   "$BUILD_JOB_STATUS_EMOJI" \
+                   "$DELIVERY_JOB_STATUS_EMOJI" \
+                   "$DEPLOY_JOB_STATUS_EMOJI")
+
+            # Send the message to Telegram
+             curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+             -d chat_id="${TELEGRAM_CHAT_ID}" \
+             -d text="${MESSAGE}" \
+             -d parse_mode="Markdown"
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build
+      - test
+      - azure-portal:
+          requires:
+            - test
+            - build
+ #     - artefact-delivery:
+# Ignore deployment if versioning for app didn't present
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
+  #        requires:
+#            - build
+  #          - test
+   #   - artefact-deploy:
+   #       requires:
+   #         - artefact-delivery
+      - notify:
+          requires:
+            - test
+            - build
+           # - artefact-delivery
+           # - artefact-deploy
+
+#APP TELEGRAM BOT
+#Bot name = app-notification
+#username = manniloff_app_notification_bot
+#Use this token to access the HTTP API: 8160426392:AAH0U-rES-lEvecTZopoaeKKFsB9iF_3OJ8
+#chatId = 845733750
